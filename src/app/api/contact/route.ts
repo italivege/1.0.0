@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 // მარტივი in-memory Cache (Rate Limiter-ისთვის)
-// გასათვალისწინებელია: Serverless გარემოში (მაგ: Vercel/Amplify) ეს მეხსიერება შეიძლება გადაიტვირთოს ხოლმე,
+// გასათვალისწინებელია: Serverless გარემოში (მაგ: Vercel) ეს მეხსიერება შეიძლება გადაიტვირთოს ხოლმე,
 // მაგრამ სპამისგან თავდასაცავად მაინც ეფექტურია.
 const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
 
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       rateLimitMap.set(ip, { count: 1, timestamp: now });
     }
 
-    // მოთხოვნის სხეულის წაკითხვა
+    // ძველი კოდი...
     const body = await request.json();
     const { name, email, message } = body;
 
@@ -53,14 +53,10 @@ export async function POST(request: Request) {
     }
 
     // Nodemailer ტრანსპორტერის კონფიგურაცია
-    // დინამიური პორტით, რათა 465 და 587 ორივემ იმუშაოს
-    const port = Number(process.env.SMTP_PORT) || 465;
-    
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: port,
-      // 465 პორტს სჭირდება secure: true, ხოლო 587-ს (STARTTLS) სჭირდება secure: false
-      secure: port === 465, 
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: true, 
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -73,7 +69,7 @@ export async function POST(request: Request) {
       replyTo: email, 
       to: process.env.RECEIVER_EMAIL,
       subject: `ახალი შეტყობინება ITalive.ge-დან: ${name}`,
-      text: `სახელი: ${name}\nელ-ფოსტა: ${email}\nIP: ${ip}\n\nშეტყობინება:\n${message}`,
+      text: `სახელი: ${name}\nელ-ფოსტა: ${email}\nIP: ${ip}\n\nშეტყობინება:\n${message}`, // დავამატე IP-ც, რომ იცოდე ვისგან მოდის
     };
 
     // მეილის გაგზავნა
@@ -83,13 +79,10 @@ export async function POST(request: Request) {
       { message: 'შეტყობინება წარმატებით გაიგზავნა!' },
       { status: 200 }
     );
-  } catch (error: any) {
-    // ერორის ლოგირება სერვერზე
-    console.error('Email send error details:', error);
-    
-    // ფრონტენდზე ზუსტი შეცდომის მიზეზის დაბრუნება (დიაგნოსტიკისთვის)
+  } catch (error) {
+    console.error('Email send error:', error);
     return NextResponse.json(
-      { message: `შეცდომა სერვერზე: ${error.message || 'უცნობი ტექნიკური ერორი'}` },
+      { message: 'სერვერის შეცდომა. შეტყობინების გაგზავნა ვერ მოხერხდა.' },
       { status: 500 }
     );
   }

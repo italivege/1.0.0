@@ -9,6 +9,36 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [barKey, setBarKey] = useState(0); // ბარის ანიმაციის თავიდან დასაწყებად
+  
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [formMessage, setFormMessage] = useState("");
+  const handleContactSubmit = async (e: React.FormEvent) => {
+	e.preventDefault();
+	setFormStatus("loading");
+	
+	try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setFormStatus("success");
+      setFormMessage(data.message);
+      setFormData({ name: "", email: "", message: "" });
+    } else {
+      setFormStatus("error");
+      setFormMessage(data.message || "გაგზავნა ვერ მოხერხდა.");
+    }
+  } catch (error) {
+    setFormStatus("error");
+    setFormMessage("ქსელის შეცდომა.");
+  }
+};
 
   // 2. აქედან ვიღებთ ენას და თარგმანებს მთელი აპლიკაციისთვის (აღარ ვიყენებთ useState-ს)
   const { lang, setLang, t } = useLanguage();
@@ -601,30 +631,69 @@ export default function Home() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Panel - Contact Form */}
       <div className="tech-panel p-8 neon-border">
-        <form onSubmit={(e) => { e.preventDefault(); alert("Transmission Sent. We will reply shortly."); }} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.name}</label>
-              <input type="text" required className="tech-input" placeholder={t.contact.namePlaceholder} />
-            </div>
-            <div>
-              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.email}</label>
-              <input type="email" required className="tech-input" placeholder={t.contact.emailPlaceholder} />
-            </div>
-          </div>
-          <div>
-            <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.message}</label>
-            <textarea required className="tech-input h-32 resize-none" placeholder={t.contact.messagePlaceholder}></textarea>
-          </div>
-          <div className="flex justify-between items-center pt-4 border-t border-cyan-900/30 mt-4">
-            <span className="text-xs text-gray-500 font-[var(--font-orbitron)] hidden sm:inline-block">
-              {t.contact.encrypted}
-            </span>
-            <button type="submit" className="btn-neon btn-solid w-full sm:w-auto px-10 py-3">
-              {t.contact.btn}
-            </button>
-          </div>
-        </form>
+<form onSubmit={handleContactSubmit} className="space-y-6">
+  <div className="grid grid-cols-1 gap-6">
+    <div>
+      <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.name}</label>
+      <input 
+        type="text" 
+        required 
+        className="tech-input" 
+        placeholder={t.contact.namePlaceholder}
+        value={formData.name}
+        onChange={(e) => setFormData({...formData, name: e.target.value})}
+        disabled={formStatus === "loading"}
+      />
+    </div>
+    <div>
+      <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.email}</label>
+      <input 
+        type="email" 
+        required 
+        className="tech-input" 
+        placeholder={t.contact.emailPlaceholder}
+        value={formData.email}
+        onChange={(e) => setFormData({...formData, email: e.target.value})}
+        disabled={formStatus === "loading"}
+      />
+    </div>
+  </div>
+  <div>
+    <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.message}</label>
+    <textarea 
+      required 
+      className="tech-input h-32 resize-none" 
+      placeholder={t.contact.messagePlaceholder}
+      value={formData.message}
+      onChange={(e) => setFormData({...formData, message: e.target.value})}
+      disabled={formStatus === "loading"}
+    ></textarea>
+  </div>
+  
+  {/* Status Messages */}
+			{formStatus !== "idle" && (
+				<div className={`p-3 rounded border font-mono text-xs ${
+				formStatus === "success" ? "bg-green-900/20 border-green-500/50 text-green-400" :
+				formStatus === "error" ? "bg-red-900/20 border-red-500/50 text-red-400" :
+				"bg-cyan-900/20 border-cyan-500/50 text-cyan-400"
+				}`}>
+				{formStatus === "loading" ? "> მონაცემები იგზავნება..." : `> ${formMessage}`}
+				</div>
+			)}
+			
+			<div className="flex justify-between items-center pt-4 border-t border-cyan-900/30 mt-4">
+				<span className="text-xs text-gray-500 font-[var(--font-orbitron)] hidden sm:inline-block">
+				{t.contact.encrypted}
+				</span>
+				<button 
+				type="submit" 
+				className={`btn-neon btn-solid w-full sm:w-auto px-10 py-3 ${formStatus === "loading" ? "opacity-50 cursor-not-allowed" : ""}`}
+				disabled={formStatus === "loading"}
+				>
+				{formStatus === "loading" ? "იგზავნება..." : t.contact.btn}
+    </button>
+  </div>
+</form>
       </div>
 
       {/* Right Panel - Contact Info & Socials */}

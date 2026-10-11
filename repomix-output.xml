@@ -62,6 +62,8 @@ src/
   components/
     BackgroundCanvas.tsx
     Navbar.tsx
+  context/
+    LanguageContext.tsx
 .gitignore
 eslint.config.mjs
 next.config.ts
@@ -72,6 +74,26 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
 
 <file path="src/app/contact/page.tsx">
 "use client";
@@ -256,6 +278,19 @@ export const translations = {
       cta: "REQUEST AI DEMO",
       backBtn: "RETURN TO SOLUTIONS"
     },
+	solutions: {
+      title1: "CORE",
+      title2: "TECHNOLOGIES",
+      desc: "Discover our suite of advanced digital tools designed to optimize, secure, and scale your operations.",
+      card1Title: "AI SYSTEMS",
+      card1Desc: "Advanced machine learning algorithms providing real-time data analysis and automated decision making.",
+      card2Title: "CLOUD ARCHITECTURE",
+      card2Desc: "Decentralized cloud solutions ensuring maximum scalability, redundancy, and global accessibility.",
+      card3Title: "DATA SECURITY",
+      card3Desc: "Military-grade encryption protocols and zero-trust network architectures protecting sensitive assets.",
+      card4Title: "NETWORK OPTIMIZATION",
+      card4Desc: "High-frequency data routing and edge computing capabilities reducing latency to theoretical minimums."
+    },
     cloud: {
       badge: "CLOUD NODE // DISTRIBUTED",
       title1: "SCALE WITHOUT",
@@ -325,7 +360,7 @@ export const translations = {
       service1Title: "Network Infrastructure",
       service1Desc: "Design and deployment of robust network topologies, including scalable 2-Tier architectures.",
       service2Title: "Remote IT Support",
-      service2Desc: "24/7 helpdesk and remote troubleshooting for enterprise systems.",
+      service2Desc: "Helpdesk and remote troubleshooting for enterprise systems.",
       service3Title: "Cloud Migration",
       service3Desc: "Seamless transition of legacy systems to decentralized cloud environments.",
       service4Title: "Hardware Maintenance",
@@ -360,6 +395,19 @@ export const translations = {
       feature3Desc: "მონაცემების დინამიური განაწილება ლატენტურობის შესამცირებლად.",
       cta: "მოითხოვე კონსულტაცია",
       backBtn: "უკან დაბრუნება"
+    },
+	solutions: {
+      title1: "ძირითადი",
+      title2: "ტექნოლოგიები",
+      desc: "აღმოაჩინეთ ჩვენი მოწინავე ციფრული ინსტრუმენტების კრებული, რომელიც შექმნილია თქვენი ოპერაციების ოპტიმიზაციის, უსაფრთხოებისა და მასშტაბირებისთვის.",
+      card1Title: "AI სისტემები",
+      card1Desc: "მანქანური სწავლების მოწინავე ალგორითმები მონაცემთა რეალურ დროში ანალიზისა და ავტომატური გადაწყვეტილებების მისაღებად.",
+      card2Title: "ქლაუდ არქიტექტურა",
+      card2Desc: "დეცენტრალიზებული ქლაუდ გადაწყვეტილებები, რომლებიც უზრუნველყოფენ მაქსიმალურ მასშტაბირებას და გლობალურ წვდომას.",
+      card3Title: "მონაცემთა უსაფრთხოება",
+      card3Desc: "სამხედრო დონის შიფრაციის პროტოკოლები და Zero-trust ქსელური არქიტექტურები სენსიტიური აქტივების დასაცავად.",
+      card4Title: "ქსელის ოპტიმიზაცია",
+      card4Desc: "მაღალსიხშირული მარშრუტიზაცია და პერიფერიული გამოთვლები, რომლებიც ამცირებენ დაყოვნებას (latency) თეორიულ მინიმუმამდე."
     },
     cloud: {
       badge: "ქლაუდ კვანძი // განაწილებული",
@@ -430,7 +478,7 @@ export const translations = {
       service1Title: "ქსელური ინფრასტრუქტურა",
       service1Desc: "საიმედო ქსელური ტოპოლოგიების, მათ შორის მასშტაბირებადი 2-დონიანი არქიტექტურების პროექტირება.",
       service2Title: "დისტანციური IT მხარდაჭერა",
-      service2Desc: "24/7 დახმარება და პრობლემების დისტანციური მოგვარება კორპორატიული სისტემებისთვის.",
+      service2Desc: "აიტი დახმარება და პრობლემების დისტანციური მოგვარება კორპორატიული სისტემებისთვის.",
       service3Title: "ქლაუდ მიგრაცია",
       service3Desc: "ლოკალური სისტემების უსაფრთხო გადატანა დეცენტრალიზებულ ქლაუდ გარემოში.",
       service4Title: "აპარატურის მოვლა",
@@ -630,24 +678,213 @@ export default function Navbar() {
 }
 </file>
 
-<file path="public/file.svg">
-<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+<file path="src/context/LanguageContext.tsx">
+"use client";
+
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { translations } from "@/app/translations";
+
+type Language = "en" | "ka";
+// ვიღებთ ინგლისური ობიექტის ტიპს, რომ TypeScript-მა ავტომატურად ამოიცნოს სიტყვები
+type Translations = typeof translations.en; 
+
+interface LanguageContextType {
+  lang: Language;
+  setLang: (lang: Language) => void;
+  t: Translations;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [lang, setLang] = useState<Language>("en");
+
+  // (სურვილისამებრ) აქ შეგიძლია ენა localStorage-შიც შეინახო, რომ დარეფრეშებისას არ დაიკარგოს
+  useEffect(() => {
+    const savedLang = localStorage.getItem("app_lang") as Language;
+    if (savedLang) setLang(savedLang);
+  }, []);
+
+  const handleSetLang = (newLang: Language) => {
+    setLang(newLang);
+    localStorage.setItem("app_lang", newLang);
+  };
+
+  const t = translations[lang];
+
+  return (
+    <LanguageContext.Provider value={{ lang, setLang: handleSetLang, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+};
 </file>
 
-<file path="public/globe.svg">
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 </file>
 
-<file path="public/next.svg">
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+<file path="eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
 </file>
 
-<file path="public/vercel.svg">
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+<file path="next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
+};
+
+export default nextConfig;
 </file>
 
-<file path="public/window.svg">
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
 </file>
 
 <file path="src/app/globals.css">
@@ -798,6 +1035,7 @@ body {
 <file path="src/app/layout.tsx">
 import type { Metadata } from "next";
 import { Orbitron, Rajdhani } from "next/font/google";
+import { LanguageProvider } from "@/context/LanguageContext"; // <--- დაამატე ეს
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -825,7 +1063,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${orbitron.variable} ${rajdhani.variable} font-sans antialiased selection:bg-cyan-500 selection:text-white`}>
-        {children}
+        {/* მთლიანი აპლიკაცია მოქცეულია LanguageProvider-ში */}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
@@ -837,14 +1078,16 @@ export default function RootLayout({
 
 import { useState, useEffect } from "react";
 import BackgroundCanvas from "@/components/BackgroundCanvas";
-import { translations } from "./translations";
+// 1. წავშალეთ ლოკალური თარგმანების იმპორტი და შემოვიტანეთ Context-ი
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
-  const [lang, setLang] = useState<"en" | "ka">("en");
-  const t = translations[lang];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [barKey, setBarKey] = useState(0); // ბარის ანიმაციის თავიდან დასაწყებად
+
+  // 2. აქედან ვიღებთ ენას და თარგმანებს მთელი აპლიკაციისთვის (აღარ ვიყენებთ useState-ს)
+  const { lang, setLang, t } = useLanguage();
 
   const navigate = (tab: string) => {
     setActiveTab(tab);
@@ -874,30 +1117,30 @@ export default function Home() {
             {/* Desktop Menu */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8 font-[var(--font-orbitron)] text-sm tracking-wide">
-				{["home", "solutions", "services", "contact"].map((tab) => (
-				<button
-					key={tab}
-					onClick={() => navigate(tab)}
-					className={`nav-link transition-colors uppercase ${
-					activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
-					}`}
-				>
-					{t.nav[tab as keyof typeof t.nav]}
-				</button>
-				))}
+                {["home", "solutions", "services", "contact"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => navigate(tab)}
+                  className={`nav-link transition-colors uppercase ${
+                  activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
+                  }`}
+                >
+                  {t.nav[tab as keyof typeof t.nav]}
+                </button>
+                ))}
               </div>
             </div>
-			
-			{/* Language Switcher */}
-				<div className="hidden md:flex items-center space-x-2 mr-4 font-[var(--font-orbitron)] text-sm">
-					<button onClick={() => setLang('en')} className={lang === 'en' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>EN</button>
-						<span className="text-gray-700">|</span>
-					<button onClick={() => setLang('ka')} className={lang === 'ka' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>GE</button>
-				</div>
+      
+      {/* Language Switcher */}
+        <div className="hidden md:flex items-center space-x-2 mr-4 font-[var(--font-orbitron)] text-sm">
+          <button onClick={() => setLang('en')} className={lang === 'en' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>EN</button>
+            <span className="text-gray-700">|</span>
+          <button onClick={() => setLang('ka')} className={lang === 'ka' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>GE</button>
+        </div>
 
             {/* Action Button */}
             <div className="hidden md:block">
-              <button className="btn-neon text-xs">LOGIN / SIGN UP</button>
+              <button className="btn-neon text-xs">{t.nav.login}</button>
             </div>
 
             {/* Mobile menu button */}
@@ -920,17 +1163,17 @@ export default function Home() {
           <div className="md:hidden bg-[#030811] border-b border-cyan-500/20 font-[var(--font-orbitron)]">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
               {["home", "solutions", "services", "contact"].map((tab) => (
-				<button
-					key={tab}
-					onClick={() => navigate(tab)}
-					className={`nav-link transition-colors uppercase ${
-					activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
-					}`}
-				>
-					{t.nav[tab as keyof typeof t.nav]}
-				</button>
-				))}
-              <button className="btn-neon mt-4 w-full text-center">LOGIN</button>
+        <button
+          key={tab}
+          onClick={() => navigate(tab)}
+          className={`nav-link transition-colors uppercase ${
+          activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
+          }`}
+        >
+          {t.nav[tab as keyof typeof t.nav]}
+        </button>
+        ))}
+              <button className="btn-neon mt-4 w-full text-center">{t.nav.login}</button>
             </div>
           </div>
         )}
@@ -940,26 +1183,26 @@ export default function Home() {
         
         {/* === HOME SECTION === */}
         <section id="home" className={`page-section ${activeTab === "home" ? "active" : ""} flex flex-col justify-center min-h-[80vh]`}>
-				<div className="max-w-4xl">
-					<div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase">
-						{t.hero.system}
-					</div>
-				<h1 className="text-5xl md:text-7xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
-					{t.hero.title1} <br />
-					{t.hero.title2} <span className="neon-text">{t.hero.titleHighlight}</span>
-				</h1>
-				<p className="text-xl md:text-2xl text-gray-400 font-light mb-10 max-w-2xl">
-					{t.hero.desc}
-				</p>
-				<div className="flex flex-col sm:flex-row gap-4">
-					<button className="btn-neon btn-solid py-4 px-8 text-lg" onClick={() => navigate("solutions")}>
-						{t.hero.btnStart}
-					</button>
-					<button className="btn-neon py-4 px-8 text-lg" onClick={() => navigate("services")}>
-						{t.hero.btnLearn}
-					</button>
-				</div>
-			</div>
+        <div className="max-w-4xl">
+          <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase">
+            {t.hero.system}
+          </div>
+        <h1 className="text-5xl md:text-7xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+          {t.hero.title1} <br />
+          {t.hero.title2} <span className="neon-text">{t.hero.titleHighlight}</span>
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-400 font-light mb-10 max-w-2xl">
+          {t.hero.desc}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button className="btn-neon btn-solid py-4 px-8 text-lg" onClick={() => navigate("solutions")}>
+            {t.hero.btnStart}
+          </button>
+          <button className="btn-neon py-4 px-8 text-lg" onClick={() => navigate("services")}>
+            {t.hero.btnLearn}
+          </button>
+        </div>
+      </div>
 
           <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden lg:block opacity-60">
             <div className="tech-panel p-6 w-64 neon-border">
@@ -971,13 +1214,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* === SOLUTIONS SECTION === */}
+{/* === SOLUTIONS SECTION === */}
         <section id="solutions" className={`page-section pt-10 ${activeTab === "solutions" ? "active" : ""}`}>
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-[var(--font-orbitron)] font-bold text-white mb-4">
-              CORE <span className="neon-text">TECHNOLOGIES</span>
+              {t.solutions.title1} <span className="neon-text">{t.solutions.title2}</span>
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">Discover our suite of advanced digital tools designed to optimize, secure, and scale your operations.</p>
+            <p className="text-gray-400 max-w-2xl mx-auto">{t.solutions.desc}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -986,113 +1229,113 @@ export default function Home() {
                 <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 </div>
-                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">AI SYSTEMS</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">Advanced machine learning algorithms providing real-time data analysis and automated decision making.</p>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{t.solutions.card1Title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{t.solutions.card1Desc}</p>
             </div>
             {/* Card 2 */}
             <div onClick={() => navigate("cloud-architecture")} className="tech-panel p-6 neon-border group cursor-pointer">
                 <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
                 </div>
-                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">CLOUD ARCHITECTURE</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">Decentralized cloud solutions ensuring maximum scalability, redundancy, and global accessibility.</p>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{t.solutions.card2Title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{t.solutions.card2Desc}</p>
             </div>
             {/* Card 3 */}
             <div onClick={() => navigate("data-security")} className="tech-panel p-6 neon-border group cursor-pointer">
                 <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 </div>
-                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">DATA SECURITY</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">Military-grade encryption protocols and zero-trust network architectures protecting sensitive assets.</p>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{t.solutions.card3Title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{t.solutions.card3Desc}</p>
             </div>
             {/* Card 4 */}
             <div onClick={() => navigate("network-optimization")} className="tech-panel p-6 neon-border group cursor-pointer">
                 <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
-                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">NETWORK OPTIMIZATION</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">High-frequency data routing and edge computing capabilities reducing latency to theoretical minimums.</p>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{t.solutions.card4Title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{t.solutions.card4Desc}</p>
             </div>
           </div>
         </section>
-		
-		{/* === AI SYSTEMS SECTION === */}
-		<section id="ai-systems" className={`page-section pt-10 ${activeTab === "ai-systems" ? "active" : ""}`}>
-			<div className="mb-6">
-				<button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
-					<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-					{t.ai.backBtn}
-				</button>
-			</div>
-			
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-				<div>
-					<div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
-						{t.ai.badge}
-					</div>
-					<h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
-						{t.ai.title1} <br />
-						<span className="neon-text">{t.ai.title2}</span>
-					</h2>
-					<p className="text-lg text-gray-400 font-light mb-8">
-						{t.ai.desc}
-					</p>
-					<div className="space-y-6 mb-10">
-						{/* Feature 1 */}
-						<div className="flex gap-4">
-							<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
-							<div>
-								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature1Title}</h4>
-								<p className="text-sm text-gray-400">{t.ai.feature1Desc}</p>
-							</div>
-						</div>
-						{/* Feature 2 */}
-						<div className="flex gap-4">
-								<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
-							<div>
-								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature2Title}</h4>
-								<p className="text-sm text-gray-400">{t.ai.feature2Desc}</p>
-							</div>
-						</div>
-						{/* Feature 3 */}
-						<div className="flex gap-4">
-							<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg></div>
-							<div>
-								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature3Title}</h4>
-								<p className="text-sm text-gray-400">{t.ai.feature3Desc}</p>
-							</div>
-						</div>
-					</div>
-					
-					<button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
-						{t.ai.cta}
-					</button>
-				</div>
-				
-				{/* Visual Element - Code Terminal */}
-				<div className="tech-panel p-1 neon-border h-96 relative group hidden lg:block">
-					<div className="absolute inset-0 bg-[#030811] p-6 rounded overflow-hidden">
-						<div className="flex gap-2 mb-4 border-b border-cyan-900/50 pb-3">
-							<div className="w-3 h-3 rounded-full bg-red-500"></div>
-							<div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-							<div className="w-3 h-3 rounded-full bg-green-500"></div>
-							<span className="text-xs text-gray-500 font-mono ml-2">ai_core_terminal.sh</span>
-						</div>
-						<div className="font-mono text-sm text-green-400 space-y-2 opacity-80">
-							<p>&gt; Initializing neural network...</p>
-							<p className="text-gray-400">&gt; Loading historical packet data [1.2 PB]... DONE</p>
-							<p>&gt; Activating anomaly detection matrix...</p>
-							<p className="text-yellow-400">&gt; WARNING: Unusual traffic spike detected on Node 7.</p>
-							<p className="text-cyan-400">&gt; AI ACTION: Rerouting traffic through Node 12. Latency optimized.</p>
-							<p>&gt; System status: <span className="text-green-500 animate-pulse">NOMINAL</span></p>
-							<p className="animate-pulse mt-4">_</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		{/* === CLOUD ARCHITECTURE SECTION === */}
+    
+    {/* === AI SYSTEMS SECTION === */}
+    <section id="ai-systems" className={`page-section pt-10 ${activeTab === "ai-systems" ? "active" : ""}`}>
+      <div className="mb-6">
+        <button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+          {t.ai.backBtn}
+        </button>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
+            {t.ai.badge}
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+            {t.ai.title1} <br />
+            <span className="neon-text">{t.ai.title2}</span>
+          </h2>
+          <p className="text-lg text-gray-400 font-light mb-8">
+            {t.ai.desc}
+          </p>
+          <div className="space-y-6 mb-10">
+            {/* Feature 1 */}
+            <div className="flex gap-4">
+              <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+              <div>
+                <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature1Title}</h4>
+                <p className="text-sm text-gray-400">{t.ai.feature1Desc}</p>
+              </div>
+            </div>
+            {/* Feature 2 */}
+            <div className="flex gap-4">
+                <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+              <div>
+                <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature2Title}</h4>
+                <p className="text-sm text-gray-400">{t.ai.feature2Desc}</p>
+              </div>
+            </div>
+            {/* Feature 3 */}
+            <div className="flex gap-4">
+              <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg></div>
+              <div>
+                <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature3Title}</h4>
+                <p className="text-sm text-gray-400">{t.ai.feature3Desc}</p>
+              </div>
+            </div>
+          </div>
+          
+          <button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
+            {t.ai.cta}
+          </button>
+        </div>
+        
+        {/* Visual Element - Code Terminal */}
+        <div className="tech-panel p-1 neon-border h-96 relative group hidden lg:block">
+          <div className="absolute inset-0 bg-[#030811] p-6 rounded overflow-hidden">
+            <div className="flex gap-2 mb-4 border-b border-cyan-900/50 pb-3">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <span className="text-xs text-gray-500 font-mono ml-2">ai_core_terminal.sh</span>
+            </div>
+            <div className="font-mono text-sm text-green-400 space-y-2 opacity-80">
+              <p>&gt; Initializing neural network...</p>
+              <p className="text-gray-400">&gt; Loading historical packet data [1.2 PB]... DONE</p>
+              <p>&gt; Activating anomaly detection matrix...</p>
+              <p className="text-yellow-400">&gt; WARNING: Unusual traffic spike detected on Node 7.</p>
+              <p className="text-cyan-400">&gt; AI ACTION: Rerouting traffic through Node 12. Latency optimized.</p>
+              <p>&gt; System status: <span className="text-green-500 animate-pulse">NOMINAL</span></p>
+              <p className="animate-pulse mt-4">_</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    {/* === CLOUD ARCHITECTURE SECTION === */}
 <section id="cloud-architecture" className={`page-section pt-10 ${activeTab === "cloud-architecture" ? "active" : ""}`}>
   <div className="mb-6">
     <button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
@@ -1539,89 +1782,6 @@ export default function Home() {
 }
 </file>
 
-<file path=".gitignore">
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-</file>
-
-<file path="eslint.config.mjs">
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
-
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
-
-export default eslintConfig;
-</file>
-
-<file path="next.config.ts">
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
-};
-
-export default nextConfig;
-</file>
-
 <file path="package.json">
 {
   "name": "italive-ge",
@@ -1635,12 +1795,14 @@ export default nextConfig;
   },
   "dependencies": {
     "next": "16.4.0",
+    "nodemailer": "^10.1.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.6.1",
@@ -1650,82 +1812,6 @@ export default nextConfig;
     "tailwindcss": "^4.3.3",
     "typescript": "^5"
   }
-}
-</file>
-
-<file path="README.md">
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-</file>
-
-<file path="tsconfig.json">
-{
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
-  ],
-  "exclude": ["node_modules"]
 }
 </file>
 

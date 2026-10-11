@@ -1,0 +1,1732 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  file.svg
+  globe.svg
+  next.svg
+  vercel.svg
+  window.svg
+src/
+  app/
+    contact/
+      page.tsx
+    services/
+      page.tsx
+    solutions/
+      page.tsx
+    favicon.ico
+    globals.css
+    layout.tsx
+    page.tsx
+    translations.ts
+  components/
+    BackgroundCanvas.tsx
+    Navbar.tsx
+.gitignore
+eslint.config.mjs
+next.config.ts
+package.json
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/app/contact/page.tsx">
+"use client";
+
+import { FormEvent } from "react";
+
+export default function Contact() {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    alert("Transmission Sent. We will reply shortly.");
+  };
+
+  return (
+    <section className="pt-10">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-tech font-bold text-white mb-2">
+            INITIALIZE <span className="neon-text">CONNECTION</span>
+          </h2>
+          <p className="text-gray-400">Secure transmission channel open. Awaiting input.</p>
+        </div>
+
+        <div className="tech-panel p-8 neon-border">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-cyan-500 text-xs font-tech mb-2">IDENTIFIER (NAME)</label>
+                <input type="text" required className="tech-input" placeholder="John Doe" />
+              </div>
+              <div>
+                <label className="block text-cyan-500 text-xs font-tech mb-2">COMM LINK (EMAIL)</label>
+                <input type="email" required className="tech-input" placeholder="john@domain.com" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-cyan-500 text-xs font-tech mb-2">ENCRYPTED MESSAGE</label>
+              <textarea required className="tech-input h-32 resize-none" placeholder="Enter query details..."></textarea>
+            </div>
+            <div className="flex justify-between items-center pt-4">
+              <span className="text-xs text-gray-500 font-tech hidden sm:inline-block">END-TO-END ENCRYPTED</span>
+              <button type="submit" className="btn-neon btn-solid w-full sm:w-auto px-10 py-3">
+                TRANSMIT
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/app/services/page.tsx">
+export default function Services() {
+  return (
+    <section className="pt-10">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-tech font-bold text-white mb-4">OUR <span className="neon-text">SERVICES</span></h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">Comprehensive infrastructure and management solutions customized for enterprise-grade performance and security.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="tech-panel p-8 neon-border transition-transform hover:-translate-y-2">
+          <h3 className="text-2xl font-tech font-bold text-cyan-400 mb-6">NETWORK INFRASTRUCTURE</h3>
+          <ul className="text-gray-300 text-sm space-y-4 font-mono">
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> 2-Tier Topology Architecture</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> CCNA Standard Enterprise Routing</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> Secure Subnet Isolation</li>
+          </ul>
+        </div>
+        
+        <div className="tech-panel p-8 neon-border transition-transform hover:-translate-y-2">
+          <h3 className="text-2xl font-tech font-bold text-cyan-400 mb-6">CLOUD & SYSTEMS</h3>
+          <ul className="text-gray-300 text-sm space-y-4 font-mono">
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> AWS Managed Services</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> High-Performance Rust Backends</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> PostgreSQL Database Scaling</li>
+          </ul>
+        </div>
+
+        <div className="tech-panel p-8 neon-border transition-transform hover:-translate-y-2">
+          <h3 className="text-2xl font-tech font-bold text-cyan-400 mb-6">SECURITY AUDIT</h3>
+          <ul className="text-gray-300 text-sm space-y-4 font-mono">
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> Zero-Trust Configurations</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> End-to-End Encryption Setup</li>
+            <li className="flex items-center gap-3"><div className="w-2 h-2 bg-cyan-400 rounded-sm shadow-[0_0_8px_#00f3ff]"></div> Traffic Monitoring & Logging</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/app/solutions/page.tsx">
+export default function Solutions() {
+  return (
+    <section className="pt-10">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-tech font-bold text-white mb-4">
+          CORE <span className="neon-text">TECHNOLOGIES</span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">
+          Discover our suite of advanced digital tools designed to optimize, secure, and scale your operations.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Card 1 */}
+        <div className="tech-panel p-6 neon-border group cursor-pointer">
+          <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <h3 className="text-xl font-tech font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">AI SYSTEMS</h3>
+          <p className="text-gray-400 text-sm leading-relaxed">Advanced machine learning algorithms providing real-time data analysis and automated decision making.</p>
+        </div>
+
+        {/* Card 2 */}
+        <div className="tech-panel p-6 neon-border group cursor-pointer">
+          <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+            </svg>
+          </div>
+          <h3 className="text-xl font-tech font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">CLOUD ARCHITECTURE</h3>
+          <p className="text-gray-400 text-sm leading-relaxed">Decentralized cloud solutions ensuring maximum scalability, redundancy, and global accessibility.</p>
+        </div>
+
+        {/* Card 3 */}
+        <div className="tech-panel p-6 neon-border group cursor-pointer">
+          <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+          </div>
+          <h3 className="text-xl font-tech font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">DATA SECURITY</h3>
+          <p className="text-gray-400 text-sm leading-relaxed">Military-grade encryption protocols and zero-trust network architectures protecting sensitive assets.</p>
+        </div>
+
+        {/* Card 4 */}
+        <div className="tech-panel p-6 neon-border group cursor-pointer">
+          <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 className="text-xl font-tech font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">NETWORK OPTIMIZATION</h3>
+          <p className="text-gray-400 text-sm leading-relaxed">High-frequency data routing and edge computing capabilities reducing latency to theoretical minimums.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/app/translations.ts">
+export const translations = {
+  en: {
+    nav: { home: "HOME", solutions: "SOLUTIONS", services: "SERVICES", contact: "CONTACT", login: "LOGIN / SIGN UP" },
+    hero: {
+      system: "System Online // v2.0",
+      title1: "EXPLORE THE FUTURE",
+      title2: "OF",
+      titleHighlight: "DIGITAL CONNECTIVITY",
+      desc: "INNOVATIVE SOLUTIONS FOR A TECH-DRIVEN WORLD. Advanced network infrastructure and secure protocols designed for modern enterprises.",
+      btnStart: "GET STARTED",
+      btnLearn: "LEARN MORE"
+    },
+    ai: {
+      badge: "AI CORE // ACTIVE",
+      title1: "AUTOMATE YOUR",
+      title2: "NETWORK SECURITY",
+      desc: "Deploy intelligent guardians that monitor traffic, detect anomalies, and route data optimally in real-time. Lower operational costs while maximizing uptime.",
+      feature1Title: "Threat Detection",
+      feature1Desc: "Real-time AI guardian blocking zero-day exploits and DDoS attacks instantly.",
+      feature2Title: "Predictive Maintenance",
+      feature2Desc: "Machine learning algorithms that predict network overloads before they happen.",
+      feature3Title: "Smart Routing",
+      feature3Desc: "Dynamic data routing to minimize latency and optimize global bandwidth.",
+      cta: "REQUEST AI DEMO",
+      backBtn: "RETURN TO SOLUTIONS"
+    },
+    cloud: {
+      badge: "CLOUD NODE // DISTRIBUTED",
+      title1: "SCALE WITHOUT",
+      title2: "LIMITS",
+      desc: "Empower your enterprise with decentralized cloud solutions. Achieve 99.99% uptime, seamless redundancy, and infinite scalability across a global network of nodes.",
+      feature1Title: "Global Redundancy",
+      feature1Desc: "Data replicated across multiple geographic zones to eliminate single points of failure.",
+      feature2Title: "Infinite Scalability",
+      feature2Desc: "Auto-scaling infrastructure that adapts to your traffic demands instantly.",
+      feature3Title: "Edge Computing",
+      feature3Desc: "Process data closer to the source for ultra-low latency and faster response times.",
+      cta: "DEPLOY CLOUD NOW",
+      backBtn: "RETURN TO SOLUTIONS"
+    },
+    security: {
+      badge: "SECURITY PROTOCOL // MAXIMUM",
+      title1: "MILITARY-GRADE",
+      title2: "DATA ENCRYPTION",
+      desc: "Protect your most valuable assets with zero-trust network architectures and advanced encryption. Total defense against modern cyber threats.",
+      feature1Title: "Zero-Trust Architecture",
+      feature1Desc: "Strict identity verification for every user and device attempting to access resources.",
+      feature2Title: "Quantum-Resistant Encryption",
+      feature2Desc: "Future-proof cryptographic protocols securing data both in transit and at rest.",
+      feature3Title: "Automated Threat Isolation",
+      feature3Desc: "Instantly quarantine compromised nodes to prevent lateral movement of malware.",
+      cta: "UPGRADE SECURITY",
+      backBtn: "RETURN TO SOLUTIONS"
+    },
+    optimization: {
+      badge: "PERFORMANCE // HYPER-SPEED",
+      title1: "NETWORK",
+      title2: "OPTIMIZATION",
+      desc: "Push your infrastructure to the theoretical limits. High-frequency routing and edge capabilities ensure ultra-low latency and maximum throughput.",
+      feature1Title: "High-Frequency Routing",
+      feature1Desc: "AI-driven path selection that bypasses congested network arteries in milliseconds.",
+      feature2Title: "Edge Acceleration",
+      feature2Desc: "Caching and processing data at the extreme edge of the network for instant delivery.",
+      feature3Title: "Bandwidth Maximization",
+      feature3Desc: "Advanced compression algorithms that double your effective data throughput.",
+      cta: "BOOST PERFORMANCE",
+      backBtn: "RETURN TO SOLUTIONS"
+    },
+	contact: {
+      title1: "INITIALIZE",
+      title2: "CONNECTION",
+      desc: "Secure transmission channel open. Awaiting input.",
+      name: "IDENTIFIER (NAME)",
+      namePlaceholder: "John Doe",
+      email: "COMM LINK (EMAIL)",
+      emailPlaceholder: "john@domain.com",
+      message: "ENCRYPTED MESSAGE",
+      messagePlaceholder: "Enter query details...",
+      encrypted: "END-TO-END ENCRYPTED",
+      btn: "TRANSMIT",
+      infoTitle: "DIRECT CHANNELS",
+      phoneLabel: "VOICE LINK",
+      phoneValue: "+995 591 918 930",
+      emailLabel: "SECURE COMM",
+      emailValue: "sandro@italive.ge",
+      socialLabel: "GLOBAL NETWORK"
+    },
+	servicesPage: {
+      title1: "IT OUTSOURCING &",
+      title2: "IT SERVICE"
+    },
+	servicesList: {
+      service1Title: "Network Infrastructure",
+      service1Desc: "Design and deployment of robust network topologies, including scalable 2-Tier architectures.",
+      service2Title: "Remote IT Support",
+      service2Desc: "24/7 helpdesk and remote troubleshooting for enterprise systems.",
+      service3Title: "Cloud Migration",
+      service3Desc: "Seamless transition of legacy systems to decentralized cloud environments.",
+      service4Title: "Hardware Maintenance",
+      service4Desc: "Routine diagnostics, repair, and upgrade of server and workstation hardware.",
+      service5Title: "Cybersecurity Audits",
+      service5Desc: "Comprehensive vulnerability assessments and zero-trust policy implementation.",
+      service6Title: "Data Backup & Recovery",
+      service6Desc: "Automated daily backups and rapid disaster recovery protocols."
+    }
+  },
+  ka: {
+    nav: { home: "მთავარი", solutions: "გადაწყვეტილებები", services: "სერვისები", contact: "კონტაქტი", login: "შესვლა" },
+    hero: {
+      system: "სისტემა ჩართულია // v2.0",
+      title1: "აღმოაჩინე მომავალი",
+      title2: "ციფრული",
+      titleHighlight: "კავშირების",
+      desc: "ინოვაციური გადაწყვეტილებები ტექნოლოგიური სამყაროსთვის. თანამედროვე ქსელური ინფრასტრუქტურა უსაფრთხო პროტოკოლებით.",
+      btnStart: "დაწყება",
+      btnLearn: "გაიგე მეტი"
+    },
+    ai: {
+      badge: "AI ბირთვი // აქტიური",
+      title1: "ქსელის უსაფრთხოების",
+      title2: "ავტომატიზაცია",
+      desc: "დანერგეთ ინტელექტუალური სისტემები, რომლებიც რეალურ დროში აკვირდებიან ტრაფიკს, აფიქსირებენ ანომალიებს და ოპტიმალურად ანაწილებენ მონაცემებს. შეამცირეთ ხარჯები და გაზარდეთ ეფექტურობა.",
+      feature1Title: "საფრთხეების ამოცნობა",
+      feature1Desc: "AI მცველი, რომელიც მყისიერად ბლოკავს DDoS შეტევებს და უცნობ საფრთხეებს.",
+      feature2Title: "პროგნოზირებადი ანალიტიკა",
+      feature2Desc: "მანქანური სწავლების ალგორითმები, რომლებიც წინასწარ საზღვრავენ ქსელის გადატვირთვას.",
+      feature3Title: "ჭკვიანი მარშრუტიზაცია",
+      feature3Desc: "მონაცემების დინამიური განაწილება ლატენტურობის შესამცირებლად.",
+      cta: "მოითხოვე კონსულტაცია",
+      backBtn: "უკან დაბრუნება"
+    },
+    cloud: {
+      badge: "ქლაუდ კვანძი // განაწილებული",
+      title1: "გაზარდე მასშტაბი",
+      title2: "ლიმიტების გარეშე",
+      desc: "მიეცით თქვენს ბიზნესს უპირატესობა დეცენტრალიზებული ქლაუდ გადაწყვეტილებებით. მიიღეთ 99.99% ხელმისაწვდომობა, უწყვეტობა და გლობალური მასშტაბირება.",
+      feature1Title: "გლობალური უწყვეტობა",
+      feature1Desc: "მონაცემების რეპლიკაცია სხვადასხვა გეოგრაფიულ ზონაში მარცხის წერტილების აღმოსაფხვრელად.",
+      feature2Title: "უსაზღვრო მასშტაბირება",
+      feature2Desc: "ავტომატურად ზრდადი ინფრასტრუქტურა, რომელიც მყისიერად ერგება თქვენს ტრაფიკს.",
+      feature3Title: "Edge Computing (პერიფერიული გამოთვლები)",
+      feature3Desc: "მონაცემთა დამუშავება წყაროსთან ახლოს ულტრა-დაბალი ლატენტურობისთვის.",
+      cta: "დაიწყე ახლავე",
+      backBtn: "უკან დაბრუნება"
+    },
+    security: {
+      badge: "უსაფრთხოების პროტოკოლი // მაქსიმალური",
+      title1: "სამხედრო დონის",
+      title2: "მონაცემთა შიფრაცია",
+      desc: "დაიცავით თქვენი ყველაზე ღირებული აქტივები ნულოვანი ნდობის (Zero-Trust) არქიტექტურით. სრული თავდაცვა თანამედროვე კიბერ საფრთხეებისგან.",
+      feature1Title: "Zero-Trust არქიტექტურა",
+      feature1Desc: "მკაცრი იდენტიფიკაცია ყველა მომხმარებლისა და მოწყობილობისთვის წვდომის მინიჭებამდე.",
+      feature2Title: "კვანტური შიფრაცია",
+      feature2Desc: "მონაცემების უსაფრთხოება უახლესი კრიპტოგრაფიული პროტოკოლებით ტრანზიტისა და შენახვის დროს.",
+      feature3Title: "საფრთხის ავტომატური იზოლაცია",
+      feature3Desc: "დაზიანებული კვანძების მყისიერი კარანტინი ვირუსის გავრცელების თავიდან ასაცილებლად.",
+      cta: "უსაფრთხოების გაძლიერება",
+      backBtn: "უკან დაბრუნება"
+    },
+    optimization: {
+      badge: "წარმადობა // ჰიპერ-სიჩქარე",
+      title1: "ქსელის",
+      title2: "ოპტიმიზაცია",
+      desc: "აიყვანეთ თქვენი ინფრასტრუქტურა თეორიულ მაქსიმუმამდე. მაღალსიხშირული მარშრუტიზაცია უზრუნველყოფს ულტრა-დაბალ დაყოვნებას.",
+      feature1Title: "მაღალსიხშირული მარშრუტიზაცია",
+      feature1Desc: "AI-ზე დაფუძნებული გზის შერჩევა, რომელიც მილიწამებში უვლის გვერდს გადატვირთულ არხებს.",
+      feature2Title: "Edge აჩქარება",
+      feature2Desc: "მონაცემების ქეშირება და დამუშავება ქსელის პერიფერიაზე მყისიერი მიწოდებისთვის.",
+      feature3Title: "გამტარუნარიანობის მაქსიმიზაცია",
+      feature3Desc: "კომპრესიის მოწინავე ალგორითმები, რომლებიც აორმაგებს ეფექტურ გამტარობას.",
+      cta: "წარმადობის გაზრდა",
+      backBtn: "უკან დაბრუნება"
+    },
+	contact: {
+      title1: "კავშირის",
+      title2: "ინიციალიზაცია",
+      desc: "უსაფრთხო არხი ღიაა. ველოდებით მონაცემებს.",
+      name: "იდენტიფიკატორი (სახელი)",
+      namePlaceholder: "გიორგი მაისურაძე",
+      email: "საკომუნიკაციო არხი (ელ. ფოსტა)",
+      emailPlaceholder: "giorgi@domain.com",
+      message: "დაშიფრული შეტყობინება",
+      messagePlaceholder: "შეიყვანეთ დეტალები...",
+      encrypted: "E2E დაშიფრული",
+      btn: "გაგზავნა",
+      infoTitle: "პირდაპირი არხები",
+      phoneLabel: "ხმოვანი კავშირი",
+      phoneValue: "+995 591 918 930",
+      emailLabel: "დაცული ფოსტა",
+      emailValue: "sandro@italive.ge",
+      socialLabel: "გლობალური ქსელი"
+    },
+	servicesPage: {
+      title1: "IT აუთსორსინგი &",
+      title2: "IT სერვისი"
+    },
+	servicesList: {
+      service1Title: "ქსელური ინფრასტრუქტურა",
+      service1Desc: "საიმედო ქსელური ტოპოლოგიების, მათ შორის მასშტაბირებადი 2-დონიანი არქიტექტურების პროექტირება.",
+      service2Title: "დისტანციური IT მხარდაჭერა",
+      service2Desc: "24/7 დახმარება და პრობლემების დისტანციური მოგვარება კორპორატიული სისტემებისთვის.",
+      service3Title: "ქლაუდ მიგრაცია",
+      service3Desc: "ლოკალური სისტემების უსაფრთხო გადატანა დეცენტრალიზებულ ქლაუდ გარემოში.",
+      service4Title: "აპარატურის მოვლა",
+      service4Desc: "სერვერებისა და სამუშაო სადგურების დიაგნოსტიკა, შეკეთება და განახლება.",
+      service5Title: "კიბერუსაფრთხოების აუდიტი",
+      service5Desc: "სისტემის მოწყვლადობის შემოწმება და ნულოვანი ნდობის (Zero-Trust) პოლიტიკის დანერგვა.",
+      service6Title: "მონაცემთა ბექაფი და აღდგენა",
+      service6Desc: "ყოველდღიური ავტომატური ბექაფები და მონაცემთა სწრაფი აღდგენა."
+    }
+  }
+};
+</file>
+
+<file path="src/components/BackgroundCanvas.tsx">
+"use client";
+
+import { useEffect, useRef } from "react";
+
+class Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  canvas: HTMLCanvasElement;
+
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.speedY = (Math.random() - 0.5) * 0.5;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x > this.canvas.width) this.x = 0;
+    else if (this.x < 0) this.x = this.canvas.width;
+    if (this.y > this.canvas.height) this.y = 0;
+    else if (this.y < 0) this.y = this.canvas.height;
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.fillStyle = "rgba(0, 243, 255, 0.5)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+export default function BackgroundCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let particlesArray: Particle[] = [];
+    let animationFrameId: number;
+
+    const initParticles = () => {
+      particlesArray = [];
+      let numberOfParticles = (canvas.width * canvas.height) / 12000;
+      if (numberOfParticles > 150) numberOfParticles = 150;
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle(canvas));
+      }
+    };
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    };
+
+    const animateCanvas = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw(ctx);
+
+        for (let j = i; j < particlesArray.length; j++) {
+          const dx = particlesArray[i].x - particlesArray[j].x;
+          const dy = particlesArray[i].y - particlesArray[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 150) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 - distance / 1000})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+            ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(animateCanvas);
+    };
+
+    window.addEventListener("resize", resize);
+    resize();
+    animateCanvas();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-screen h-screen -z-10 opacity-40"
+    />
+  );
+}
+</file>
+
+<file path="src/components/Navbar.tsx">
+"use client";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+export default function Navbar() {
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { name: 'HOME', path: '/' },
+    { name: 'SOLUTIONS', path: '/solutions' },
+    { name: 'SERVICES', path: '/services' },
+    { name: 'CONTACT', path: '/contact' },
+  ];
+
+  return (
+    <nav className="fixed top-0 w-full z-40 bg-[#030811]/80 backdrop-blur-md border-b border-cyan-500/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 cursor-pointer">
+            <span className="font-tech font-bold text-2xl tracking-wider text-white">
+              italive<span className="neon-text">.ge</span>
+            </span>
+          </Link>
+          
+          {/* Desktop Menu */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-8 font-tech text-sm tracking-wide">
+              {navLinks.map((link) => (
+                <Link key={link.path} href={link.path} 
+                  className={`transition-colors ${pathname === link.path ? 'text-white' : 'text-gray-400 hover:text-cyan-400'}`}>
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="hidden md:block">
+            <button className="btn-neon text-xs">LOGIN / SIGN UP</button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="-mr-2 flex md:hidden">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="inline-flex items-center justify-center p-2 rounded-md text-cyan-400 hover:text-white focus:outline-none">
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-[#030811] border-b border-cyan-500/20 font-tech">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
+            {navLinks.map((link) => (
+              <Link key={link.path} href={link.path} onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${pathname === link.path ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'}`}>
+                {link.name}
+              </Link>
+            ))}
+            <button className="btn-neon mt-4 w-full text-center">LOGIN / SIGN UP</button>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="src/app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --neon-cyan: #00f3ff;
+  --neon-cyan-dim: rgba(0, 243, 255, 0.2);
+  --bg-dark: #030811;
+  --panel-bg: rgba(10, 20, 35, 0.7);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark);
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+/* Neon Text Glow */
+.neon-text {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
+}
+
+/* Neon Borders & Panels */
+.neon-border {
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan-dim), inset 0 0 10px var(--neon-cyan-dim);
+  transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+  box-shadow: 0 0 20px var(--neon-cyan-dim), inset 0 0 20px var(--neon-cyan-dim);
+  background-color: rgba(0, 243, 255, 0.05);
+}
+
+.tech-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-panel::before, .tech-panel::after {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--neon-cyan);
+  transition: all 0.3s ease;
+}
+.tech-panel::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+.tech-panel::after { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+/* Buttons */
+.btn-neon {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-orbitron);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neon-cyan);
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px var(--neon-cyan-dim);
+}
+
+.btn-neon:hover {
+  background: var(--neon-cyan);
+  color: var(--bg-dark);
+  box-shadow: 0 0 20px var(--neon-cyan);
+}
+
+.btn-solid {
+  background: var(--neon-cyan);
+  color: var(--bg-dark);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 15px var(--neon-cyan-dim);
+}
+.btn-solid:hover {
+  background: #fff;
+  color: var(--bg-dark);
+  border-color: #fff;
+  box-shadow: 0 0 25px #fff;
+}
+
+/* Scanlines Overlay */
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan-dim); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+/* SPA Section Transition */
+.page-section {
+  display: none;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.page-section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form Inputs */
+.tech-input {
+  width: 100%;
+  background: rgba(0, 243, 255, 0.05);
+  border: none;
+  border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+  color: #fff;
+  padding: 0.75rem;
+  font-family: var(--font-rajdhani);
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+.tech-input:focus {
+  outline: none;
+  border-bottom-color: var(--neon-cyan);
+  background: rgba(0, 243, 255, 0.1);
+}
+
+@keyframes growBar { from { height: 0; } }
+.bar-fill { animation: growBar 1.5s ease-out forwards; }
+</file>
+
+<file path="src/app/layout.tsx">
+import type { Metadata } from "next";
+import { Orbitron, Rajdhani } from "next/font/google";
+import "./globals.css";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  variable: "--font-orbitron",
+});
+
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-rajdhani",
+});
+
+export const metadata: Metadata = {
+  title: "italive.ge - Future of Digital Connectivity",
+  description: "Innovative solutions for a tech-driven world.",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={`${orbitron.variable} ${rajdhani.variable} font-sans antialiased selection:bg-cyan-500 selection:text-white`}>
+        {children}
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="src/app/page.tsx">
+"use client";
+
+import { useState, useEffect } from "react";
+import BackgroundCanvas from "@/components/BackgroundCanvas";
+import { translations } from "./translations";
+
+export default function Home() {
+  const [activeTab, setActiveTab] = useState("home");
+  const [lang, setLang] = useState<"en" | "ka">("en");
+  const t = translations[lang];
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [barKey, setBarKey] = useState(0); // ბარის ანიმაციის თავიდან დასაწყებად
+
+  const navigate = (tab: string) => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
+    if (tab === "services") {
+      setBarKey(prev => prev + 1); // არესეტებს ანიმაციას
+    }
+  };
+
+  return (
+    <>
+      <BackgroundCanvas />
+      <div className="scanlines"></div>
+
+      <nav className="fixed top-0 w-full z-40 bg-[#030811]/80 backdrop-blur-md border-b border-cyan-500/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex-shrink-0 cursor-pointer" onClick={() => navigate("home")}>
+              <span className="font-[var(--font-orbitron)] font-bold text-2xl tracking-wider text-white">
+                italive<span className="neon-text">.ge</span>
+              </span>
+            </div>
+
+            {/* Desktop Menu */}
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8 font-[var(--font-orbitron)] text-sm tracking-wide">
+				{["home", "solutions", "services", "contact"].map((tab) => (
+				<button
+					key={tab}
+					onClick={() => navigate(tab)}
+					className={`nav-link transition-colors uppercase ${
+					activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
+					}`}
+				>
+					{t.nav[tab as keyof typeof t.nav]}
+				</button>
+				))}
+              </div>
+            </div>
+			
+			{/* Language Switcher */}
+				<div className="hidden md:flex items-center space-x-2 mr-4 font-[var(--font-orbitron)] text-sm">
+					<button onClick={() => setLang('en')} className={lang === 'en' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>EN</button>
+						<span className="text-gray-700">|</span>
+					<button onClick={() => setLang('ka')} className={lang === 'ka' ? 'text-cyan-400' : 'text-gray-500 hover:text-white'}>GE</button>
+				</div>
+
+            {/* Action Button */}
+            <div className="hidden md:block">
+              <button className="btn-neon text-xs">LOGIN / SIGN UP</button>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="-mr-2 flex md:hidden">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-cyan-400 hover:text-white focus:outline-none"
+              >
+                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-[#030811] border-b border-cyan-500/20 font-[var(--font-orbitron)]">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
+              {["home", "solutions", "services", "contact"].map((tab) => (
+				<button
+					key={tab}
+					onClick={() => navigate(tab)}
+					className={`nav-link transition-colors uppercase ${
+					activeTab === tab ? "text-white" : "text-gray-400 hover:text-cyan-400"
+					}`}
+				>
+					{t.nav[tab as keyof typeof t.nav]}
+				</button>
+				))}
+              <button className="btn-neon mt-4 w-full text-center">LOGIN</button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen relative z-10">
+        
+        {/* === HOME SECTION === */}
+        <section id="home" className={`page-section ${activeTab === "home" ? "active" : ""} flex flex-col justify-center min-h-[80vh]`}>
+				<div className="max-w-4xl">
+					<div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase">
+						{t.hero.system}
+					</div>
+				<h1 className="text-5xl md:text-7xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+					{t.hero.title1} <br />
+					{t.hero.title2} <span className="neon-text">{t.hero.titleHighlight}</span>
+				</h1>
+				<p className="text-xl md:text-2xl text-gray-400 font-light mb-10 max-w-2xl">
+					{t.hero.desc}
+				</p>
+				<div className="flex flex-col sm:flex-row gap-4">
+					<button className="btn-neon btn-solid py-4 px-8 text-lg" onClick={() => navigate("solutions")}>
+						{t.hero.btnStart}
+					</button>
+					<button className="btn-neon py-4 px-8 text-lg" onClick={() => navigate("services")}>
+						{t.hero.btnLearn}
+					</button>
+				</div>
+			</div>
+
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden lg:block opacity-60">
+            <div className="tech-panel p-6 w-64 neon-border">
+              <h4 className="text-cyan-400 font-[var(--font-orbitron)] text-sm mb-2 border-b border-cyan-500/30 pb-2">LIVE METRICS</h4>
+              <div className="flex justify-between text-sm my-2"><span>Latency:</span> <span className="text-green-400">12ms</span></div>
+              <div className="flex justify-between text-sm my-2"><span>Uptime:</span> <span className="text-green-400">99.99%</span></div>
+              <div className="flex justify-between text-sm my-2"><span>Nodes:</span> <span className="text-cyan-400 animate-pulse">Active</span></div>
+            </div>
+          </div>
+        </section>
+
+        {/* === SOLUTIONS SECTION === */}
+        <section id="solutions" className={`page-section pt-10 ${activeTab === "solutions" ? "active" : ""}`}>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-[var(--font-orbitron)] font-bold text-white mb-4">
+              CORE <span className="neon-text">TECHNOLOGIES</span>
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">Discover our suite of advanced digital tools designed to optimize, secure, and scale your operations.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             {/* Card 1 */}
+             <div onClick={() => navigate("ai-systems")} className="tech-panel p-6 neon-border group cursor-pointer">
+                <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">AI SYSTEMS</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Advanced machine learning algorithms providing real-time data analysis and automated decision making.</p>
+            </div>
+            {/* Card 2 */}
+            <div onClick={() => navigate("cloud-architecture")} className="tech-panel p-6 neon-border group cursor-pointer">
+                <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                </div>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">CLOUD ARCHITECTURE</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Decentralized cloud solutions ensuring maximum scalability, redundancy, and global accessibility.</p>
+            </div>
+            {/* Card 3 */}
+            <div onClick={() => navigate("data-security")} className="tech-panel p-6 neon-border group cursor-pointer">
+                <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">DATA SECURITY</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Military-grade encryption protocols and zero-trust network architectures protecting sensitive assets.</p>
+            </div>
+            {/* Card 4 */}
+            <div onClick={() => navigate("network-optimization")} className="tech-panel p-6 neon-border group cursor-pointer">
+                <div className="w-12 h-12 mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">NETWORK OPTIMIZATION</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">High-frequency data routing and edge computing capabilities reducing latency to theoretical minimums.</p>
+            </div>
+          </div>
+        </section>
+		
+		{/* === AI SYSTEMS SECTION === */}
+		<section id="ai-systems" className={`page-section pt-10 ${activeTab === "ai-systems" ? "active" : ""}`}>
+			<div className="mb-6">
+				<button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
+					<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+					{t.ai.backBtn}
+				</button>
+			</div>
+			
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+				<div>
+					<div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
+						{t.ai.badge}
+					</div>
+					<h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+						{t.ai.title1} <br />
+						<span className="neon-text">{t.ai.title2}</span>
+					</h2>
+					<p className="text-lg text-gray-400 font-light mb-8">
+						{t.ai.desc}
+					</p>
+					<div className="space-y-6 mb-10">
+						{/* Feature 1 */}
+						<div className="flex gap-4">
+							<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+							<div>
+								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature1Title}</h4>
+								<p className="text-sm text-gray-400">{t.ai.feature1Desc}</p>
+							</div>
+						</div>
+						{/* Feature 2 */}
+						<div className="flex gap-4">
+								<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+							<div>
+								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature2Title}</h4>
+								<p className="text-sm text-gray-400">{t.ai.feature2Desc}</p>
+							</div>
+						</div>
+						{/* Feature 3 */}
+						<div className="flex gap-4">
+							<div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg></div>
+							<div>
+								<h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.ai.feature3Title}</h4>
+								<p className="text-sm text-gray-400">{t.ai.feature3Desc}</p>
+							</div>
+						</div>
+					</div>
+					
+					<button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
+						{t.ai.cta}
+					</button>
+				</div>
+				
+				{/* Visual Element - Code Terminal */}
+				<div className="tech-panel p-1 neon-border h-96 relative group hidden lg:block">
+					<div className="absolute inset-0 bg-[#030811] p-6 rounded overflow-hidden">
+						<div className="flex gap-2 mb-4 border-b border-cyan-900/50 pb-3">
+							<div className="w-3 h-3 rounded-full bg-red-500"></div>
+							<div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+							<div className="w-3 h-3 rounded-full bg-green-500"></div>
+							<span className="text-xs text-gray-500 font-mono ml-2">ai_core_terminal.sh</span>
+						</div>
+						<div className="font-mono text-sm text-green-400 space-y-2 opacity-80">
+							<p>&gt; Initializing neural network...</p>
+							<p className="text-gray-400">&gt; Loading historical packet data [1.2 PB]... DONE</p>
+							<p>&gt; Activating anomaly detection matrix...</p>
+							<p className="text-yellow-400">&gt; WARNING: Unusual traffic spike detected on Node 7.</p>
+							<p className="text-cyan-400">&gt; AI ACTION: Rerouting traffic through Node 12. Latency optimized.</p>
+							<p>&gt; System status: <span className="text-green-500 animate-pulse">NOMINAL</span></p>
+							<p className="animate-pulse mt-4">_</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		{/* === CLOUD ARCHITECTURE SECTION === */}
+<section id="cloud-architecture" className={`page-section pt-10 ${activeTab === "cloud-architecture" ? "active" : ""}`}>
+  <div className="mb-6">
+    <button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      {t.cloud.backBtn}
+    </button>
+  </div>
+
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
+        {t.cloud.badge}
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+        {t.cloud.title1} <br />
+        <span className="neon-text">{t.cloud.title2}</span>
+      </h2>
+      <p className="text-lg text-gray-400 font-light mb-8">
+        {t.cloud.desc}
+      </p>
+
+      <div className="space-y-6 mb-10">
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.cloud.feature1Title}</h4>
+            <p className="text-sm text-gray-400">{t.cloud.feature1Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.cloud.feature2Title}</h4>
+            <p className="text-sm text-gray-400">{t.cloud.feature2Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.cloud.feature3Title}</h4>
+            <p className="text-sm text-gray-400">{t.cloud.feature3Desc}</p>
+          </div>
+        </div>
+      </div>
+
+      <button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
+        {t.cloud.cta}
+      </button>
+    </div>
+
+    {/* Visual Element - Animated Cloud Nodes */}
+    <div className="tech-panel p-1 neon-border h-96 relative group hidden lg:flex items-center justify-center">
+      <div className="absolute inset-0 bg-[#030811] rounded overflow-hidden flex items-center justify-center">
+         <div className="relative w-64 h-64">
+           {/* Center Node */}
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-cyan-900/30 border-2 border-cyan-400 rounded-lg flex items-center justify-center shadow-[0_0_25px_#00f3ff] z-10 animate-pulse">
+             <svg className="w-10 h-10 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+           </div>
+           
+           {/* Surrounding Nodes */}
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#0a1423] border border-cyan-500/50 rounded flex items-center justify-center z-10"><div className="w-3 h-3 bg-cyan-400 rounded-full animate-ping"></div></div>
+           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#0a1423] border border-cyan-500/50 rounded flex items-center justify-center z-10"><div className="w-3 h-3 bg-cyan-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div></div>
+           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a1423] border border-cyan-500/50 rounded flex items-center justify-center z-10"><div className="w-3 h-3 bg-cyan-400 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div></div>
+           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a1423] border border-cyan-500/50 rounded flex items-center justify-center z-10"><div className="w-3 h-3 bg-cyan-400 rounded-full animate-ping" style={{animationDelay: '0.6s'}}></div></div>
+           
+           {/* Connecting Lines */}
+           <svg className="absolute inset-0 w-full h-full" style={{stroke: 'rgba(0, 243, 255, 0.4)', strokeWidth: 2, strokeDasharray: 4}}>
+             <line x1="50%" y1="50%" x2="50%" y2="10%" className="animate-pulse" />
+             <line x1="50%" y1="50%" x2="50%" y2="90%" className="animate-pulse" style={{animationDelay: '0.2s'}} />
+             <line x1="50%" y1="50%" x2="10%" y2="50%" className="animate-pulse" style={{animationDelay: '0.4s'}} />
+             <line x1="50%" y1="50%" x2="90%" y2="50%" className="animate-pulse" style={{animationDelay: '0.6s'}} />
+           </svg>
+         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* === DATA SECURITY SECTION === */}
+<section id="data-security" className={`page-section pt-10 ${activeTab === "data-security" ? "active" : ""}`}>
+  <div className="mb-6">
+    <button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      {t.security.backBtn}
+    </button>
+  </div>
+
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
+        {t.security.badge}
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+        {t.security.title1} <br />
+        <span className="neon-text">{t.security.title2}</span>
+      </h2>
+      <p className="text-lg text-gray-400 font-light mb-8">
+        {t.security.desc}
+      </p>
+
+      <div className="space-y-6 mb-10">
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.security.feature1Title}</h4>
+            <p className="text-sm text-gray-400">{t.security.feature1Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.security.feature2Title}</h4>
+            <p className="text-sm text-gray-400">{t.security.feature2Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.security.feature3Title}</h4>
+            <p className="text-sm text-gray-400">{t.security.feature3Desc}</p>
+          </div>
+        </div>
+      </div>
+
+      <button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
+        {t.security.cta}
+      </button>
+    </div>
+
+    {/* Visual Element - Security Shield */}
+    <div className="tech-panel p-1 neon-border h-96 relative group hidden lg:flex items-center justify-center">
+      <div className="absolute inset-0 bg-[#030811] rounded overflow-hidden flex items-center justify-center">
+         
+         {/* Animated Shield Container */}
+         <div className="relative flex items-center justify-center">
+            {/* Outer scanning rings */}
+            <div className="absolute w-64 h-64 border border-cyan-500/20 rounded-full animate-[spin_8s_linear_infinite]"></div>
+            <div className="absolute w-52 h-52 border-t border-b border-cyan-400/50 rounded-full animate-[spin_4s_linear_infinite_reverse]"></div>
+            
+            {/* Shield Icon */}
+            <div className="relative z-10 text-cyan-400 drop-shadow-[0_0_15px_rgba(0,243,255,0.8)]">
+              <svg className="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+            </div>
+
+            {/* Scanline passing over */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/20 to-transparent w-full h-full animate-[translateY_2s_ease-in-out_infinite] z-20" style={{ transform: 'translateY(-100%)' }}>
+               <style>{`
+                 @keyframes translateY {
+                   0% { transform: translateY(-100%); }
+                   50% { transform: translateY(100%); }
+                   100% { transform: translateY(-100%); }
+                 }
+               `}</style>
+            </div>
+         </div>
+
+         {/* Status Text */}
+         <div className="absolute bottom-6 font-mono text-xs text-green-400 flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+            ENCRYPTION ACTIVE // SECURE
+         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* === NETWORK OPTIMIZATION SECTION === */}
+<section id="network-optimization" className={`page-section pt-10 ${activeTab === "network-optimization" ? "active" : ""}`}>
+  <div className="mb-6">
+    <button onClick={() => navigate("solutions")} className="text-cyan-400 hover:text-white font-[var(--font-orbitron)] text-sm flex items-center gap-2 transition-colors">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      {t.optimization.backBtn}
+    </button>
+  </div>
+
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div>
+      <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-6 tracking-widest uppercase animate-pulse">
+        {t.optimization.badge}
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold font-[var(--font-orbitron)] text-white leading-tight mb-6">
+        {t.optimization.title1} <br />
+        <span className="neon-text">{t.optimization.title2}</span>
+      </h2>
+      <p className="text-lg text-gray-400 font-light mb-8">
+        {t.optimization.desc}
+      </p>
+
+      <div className="space-y-6 mb-10">
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.optimization.feature1Title}</h4>
+            <p className="text-sm text-gray-400">{t.optimization.feature1Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.optimization.feature2Title}</h4>
+            <p className="text-sm text-gray-400">{t.optimization.feature2Desc}</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="mt-1 text-cyan-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg></div>
+          <div>
+            <h4 className="font-[var(--font-orbitron)] text-white text-lg">{t.optimization.feature3Title}</h4>
+            <p className="text-sm text-gray-400">{t.optimization.feature3Desc}</p>
+          </div>
+        </div>
+      </div>
+
+      <button className="btn-neon btn-solid py-4 px-10 text-lg w-full sm:w-auto" onClick={() => navigate("contact")}>
+        {t.optimization.cta}
+      </button>
+    </div>
+
+    {/* Visual Element - Hyper-Speed Data Streams */}
+    <div className="tech-panel p-1 neon-border h-96 relative group hidden lg:flex items-center justify-center">
+      <div className="absolute inset-0 bg-[#030811] rounded overflow-hidden">
+         
+         {/* Animated Data Lines */}
+         <div className="absolute inset-0 opacity-70">
+            <div className="absolute top-[20%] left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-[translateX_1.5s_linear_infinite]" style={{ transform: 'translateX(-100%)' }}></div>
+            <div className="absolute top-[40%] left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent animate-[translateX_1s_linear_infinite]" style={{ transform: 'translateX(-100%)', animationDelay: '0.2s' }}></div>
+            <div className="absolute top-[60%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-[translateX_2s_linear_infinite]" style={{ transform: 'translateX(-100%)', animationDelay: '0.5s' }}></div>
+            <div className="absolute top-[80%] left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-[translateX_1.2s_linear_infinite]" style={{ transform: 'translateX(-100%)', animationDelay: '0.1s' }}></div>
+            
+            <style>{`
+              @keyframes translateX {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
+         </div>
+
+         {/* Latency Meter */}
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-10 bg-[#030811]/80 p-6 rounded-full border border-cyan-500/30 backdrop-blur-sm">
+            <span className="text-gray-400 text-xs font-[var(--font-orbitron)] mb-1">LATENCY</span>
+            <div className="text-4xl font-bold text-white font-[var(--font-orbitron)] flex items-end gap-1">
+              <span className="text-cyan-400">0.</span>4
+              <span className="text-sm text-cyan-500 mb-1">ms</span>
+            </div>
+         </div>
+
+         {/* Grid background */}
+         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,243,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,243,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{/* === SERVICES SECTION (Formerly DATA LAB) === */}
+        <section id="services" className={`page-section pt-10 ${activeTab === "services" ? "active" : ""}`}>
+          <div className="mb-10 flex flex-col md:flex-row justify-between items-end border-b border-cyan-500/30 pb-4">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-[var(--font-orbitron)] font-bold text-white uppercase">
+                {t.servicesPage.title1} <br className="md:hidden" />
+                <span className="neon-text">{t.servicesPage.title2}</span>
+              </h2>
+              <p className="text-cyan-500/70 text-sm mt-1 uppercase tracking-widest">Active Services</p>
+            </div>
+            <div className="font-[var(--font-orbitron)] text-cyan-400 mt-4 md:mt-0 bg-cyan-900/20 px-4 py-2 rounded text-sm">
+              Active: <span className="text-green-400 animate-pulse">Services</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+            {/* Service Card 1 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service1Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service1Desc}</p>
+            </div>
+
+            {/* Service Card 2 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service2Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service2Desc}</p>
+            </div>
+
+            {/* Service Card 3 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service3Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service3Desc}</p>
+            </div>
+
+            {/* Service Card 4 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service4Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service4Desc}</p>
+            </div>
+
+            {/* Service Card 5 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service5Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service5Desc}</p>
+            </div>
+
+            {/* Service Card 6 */}
+            <div className="tech-panel p-6 neon-border group hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 mb-4 text-cyan-400 bg-cyan-900/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-black transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+              </div>
+              <h3 className="text-xl font-[var(--font-orbitron)] font-bold text-white mb-3">{t.servicesList.service6Title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t.servicesList.service6Desc}</p>
+            </div>
+          </div>
+        </section>
+
+{/* === CONTACT SECTION === */}
+<section id="contact" className={`page-section pt-10 ${activeTab === "contact" ? "active" : ""}`}>
+  <div className="max-w-5xl mx-auto">
+    <div className="text-center mb-10">
+      <h2 className="text-4xl font-[var(--font-orbitron)] font-bold text-white mb-2">
+        {t.contact.title1} <span className="neon-text">{t.contact.title2}</span>
+      </h2>
+      <p className="text-gray-400">{t.contact.desc}</p>
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left Panel - Contact Form */}
+      <div className="tech-panel p-8 neon-border">
+        <form onSubmit={(e) => { e.preventDefault(); alert("Transmission Sent. We will reply shortly."); }} className="space-y-6">
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.name}</label>
+              <input type="text" required className="tech-input" placeholder={t.contact.namePlaceholder} />
+            </div>
+            <div>
+              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.email}</label>
+              <input type="email" required className="tech-input" placeholder={t.contact.emailPlaceholder} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.message}</label>
+            <textarea required className="tech-input h-32 resize-none" placeholder={t.contact.messagePlaceholder}></textarea>
+          </div>
+          <div className="flex justify-between items-center pt-4 border-t border-cyan-900/30 mt-4">
+            <span className="text-xs text-gray-500 font-[var(--font-orbitron)] hidden sm:inline-block">
+              {t.contact.encrypted}
+            </span>
+            <button type="submit" className="btn-neon btn-solid w-full sm:w-auto px-10 py-3">
+              {t.contact.btn}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Right Panel - Contact Info & Socials */}
+      <div className="tech-panel p-8 neon-border flex flex-col justify-between">
+        <div>
+          <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-8 tracking-widest uppercase animate-pulse">
+            {t.contact.infoTitle}
+          </div>
+
+          <div className="space-y-8">
+            {/* Phone */}
+            <div className="flex items-start gap-4 group">
+              <div className="mt-1 p-3 bg-cyan-900/20 border border-cyan-500/30 rounded text-cyan-400 group-hover:bg-cyan-400 group-hover:text-black transition-all">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+              </div>
+              <div>
+                <h4 className="font-[var(--font-orbitron)] text-gray-500 text-xs mb-1">{t.contact.phoneLabel}</h4>
+                <p className="text-white text-xl tracking-wider font-bold">{t.contact.phoneValue}</p>
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-start gap-4 group">
+              <div className="mt-1 p-3 bg-cyan-900/20 border border-cyan-500/30 rounded text-cyan-400 group-hover:bg-cyan-400 group-hover:text-black transition-all">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              </div>
+              <div>
+                <h4 className="font-[var(--font-orbitron)] text-gray-500 text-xs mb-1">{t.contact.emailLabel}</h4>
+                <p className="text-white text-xl tracking-wider font-bold">{t.contact.emailValue}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Social Links */}
+        <div className="mt-12 pt-8 border-t border-cyan-900/30">
+          <h4 className="font-[var(--font-orbitron)] text-gray-500 text-xs mb-4">{t.contact.socialLabel}</h4>
+          <div className="flex gap-4">
+            {/* Facebook */}
+            <a href="#" className="p-3 border border-cyan-900 text-gray-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(0,243,255,0.5)] rounded transition-all">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z"/></svg>
+            </a>
+            {/* Instagram */}
+            <a href="#" className="p-3 border border-cyan-900 text-gray-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(0,243,255,0.5)] rounded transition-all">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            {/* LinkedIn */}
+            <a href="#" className="p-3 border border-cyan-900 text-gray-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(0,243,255,0.5)] rounded transition-all">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>
+            </a>
+            {/* YouTube */}
+            <a href="#" className="p-3 border border-cyan-900 text-gray-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(0,243,255,0.5)] rounded transition-all">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+      </main>
+
+      <footer className="border-t border-cyan-500/20 bg-[#02050a] py-8 relative z-10 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="font-[var(--font-orbitron)] text-xl text-white">
+            italive<span className="text-cyan-400">.ge</span>
+          </div>
+          <div className="flex gap-6 text-sm text-gray-500">
+            <a href="#" className="hover:text-cyan-400 transition-colors">Privacy Protocol</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">Terms of Service</a>
+          </div>
+          <div className="text-gray-600 text-xs font-[var(--font-orbitron)]">
+            &copy; 2026 ITALIVE.GE. ALL SYSTEMS ALIVE.
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+</file>
+
+<file path="next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
+};
+
+export default nextConfig;
+</file>
+
+<file path="package.json">
+{
+  "name": "italive-ge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+</file>
+
+</files>

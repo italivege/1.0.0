@@ -48,6 +48,9 @@ public/
   window.svg
 src/
   app/
+    api/
+      contact/
+        route.ts
     contact/
       page.tsx
     services/
@@ -93,6 +96,98 @@ This section contains the contents of the repository's files.
 
 <file path="public/window.svg">
 <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="src/app/api/contact/route.ts">
+import { NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
+
+// მარტივი in-memory Cache (Rate Limiter-ისთვის)
+// გასათვალისწინებელია: Serverless გარემოში (მაგ: Vercel) ეს მეხსიერება შეიძლება გადაიტვირთოს ხოლმე,
+// მაგრამ სპამისგან თავდასაცავად მაინც ეფექტურია.
+const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
+
+export async function POST(request: Request) {
+  try {
+    // 1. მოვიპოვოთ კლიენტის IP მისამართი
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown_ip';
+
+    // 2. Rate Limiting ლოგიკა (მაქს. 3 მოთხოვნა საათში)
+    const MAX_REQUESTS_PER_HOUR = 3;
+    const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+    const now = Date.now();
+
+    const requestData = rateLimitMap.get(ip);
+
+    if (requestData) {
+      // ვამოწმებთ, გავიდა თუ არა 1 საათი პირველი მოთხოვნიდან
+      if (now - requestData.timestamp < ONE_HOUR_IN_MS) {
+        if (requestData.count >= MAX_REQUESTS_PER_HOUR) {
+          return NextResponse.json(
+            { message: 'შეტყობინებების ლიმიტი ამოწურულია. სცადეთ მოგვიანებით (1 საათში).' },
+            { status: 429 } // 429 Too Many Requests
+          );
+        }
+        // თუ 1 საათი არ გასულა და ლიმიტიც არაა ამოწურული, ვზრდით count-ს
+        requestData.count += 1;
+      } else {
+        // თუ 1 საათი გავიდა, ვარესეტებთ
+        rateLimitMap.set(ip, { count: 1, timestamp: now });
+      }
+    } else {
+      // პირველი მოთხოვნა ამ IP-დან
+      rateLimitMap.set(ip, { count: 1, timestamp: now });
+    }
+
+    // ძველი კოდი...
+    const body = await request.json();
+    const { name, email, message } = body;
+
+    // მარტივი ვალიდაცია
+    if (!name || !email || !message) {
+      return NextResponse.json(
+        { message: 'გთხოვთ შეავსოთ ყველა ველი.' },
+        { status: 400 }
+      );
+    }
+
+    // Nodemailer ტრანსპორტერის კონფიგურაცია
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: true, 
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    // მეილის ფორმატირება
+    const mailOptions = {
+      from: process.env.SMTP_USER, 
+      replyTo: email, 
+      to: process.env.RECEIVER_EMAIL,
+      subject: `ახალი შეტყობინება ITalive.ge-დან: ${name}`,
+      text: `სახელი: ${name}\nელ-ფოსტა: ${email}\nIP: ${ip}\n\nშეტყობინება:\n${message}`, // დავამატე IP-ც, რომ იცოდე ვისგან მოდის
+    };
+
+    // მეილის გაგზავნა
+    await transporter.sendMail(mailOptions);
+
+    return NextResponse.json(
+      { message: 'შეტყობინება წარმატებით გაიგზავნა!' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Email send error:', error);
+    return NextResponse.json(
+      { message: 'სერვერის შეცდომა. შეტყობინების გაგზავნა ვერ მოხერხდა.' },
+      { status: 500 }
+    );
+  }
+}
 </file>
 
 <file path="src/app/contact/page.tsx">
@@ -1073,6 +1168,39 @@ export default function RootLayout({
 }
 </file>
 
+<file path="package.json">
+{
+  "name": "italive-ge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "nodemailer": "^10.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5"
+  }
+}
+</file>
+
 <file path="src/app/page.tsx">
 "use client";
 
@@ -1085,6 +1213,36 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [barKey, setBarKey] = useState(0); // ბარის ანიმაციის თავიდან დასაწყებად
+  
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [formMessage, setFormMessage] = useState("");
+  const handleContactSubmit = async (e: React.FormEvent) => {
+	e.preventDefault();
+	setFormStatus("loading");
+	
+	try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setFormStatus("success");
+      setFormMessage(data.message);
+      setFormData({ name: "", email: "", message: "" });
+    } else {
+      setFormStatus("error");
+      setFormMessage(data.message || "გაგზავნა ვერ მოხერხდა.");
+    }
+  } catch (error) {
+    setFormStatus("error");
+    setFormMessage("ქსელის შეცდომა.");
+  }
+};
 
   // 2. აქედან ვიღებთ ენას და თარგმანებს მთელი აპლიკაციისთვის (აღარ ვიყენებთ useState-ს)
   const { lang, setLang, t } = useLanguage();
@@ -1677,30 +1835,69 @@ export default function Home() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Left Panel - Contact Form */}
       <div className="tech-panel p-8 neon-border">
-        <form onSubmit={(e) => { e.preventDefault(); alert("Transmission Sent. We will reply shortly."); }} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.name}</label>
-              <input type="text" required className="tech-input" placeholder={t.contact.namePlaceholder} />
-            </div>
-            <div>
-              <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.email}</label>
-              <input type="email" required className="tech-input" placeholder={t.contact.emailPlaceholder} />
-            </div>
-          </div>
-          <div>
-            <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.message}</label>
-            <textarea required className="tech-input h-32 resize-none" placeholder={t.contact.messagePlaceholder}></textarea>
-          </div>
-          <div className="flex justify-between items-center pt-4 border-t border-cyan-900/30 mt-4">
-            <span className="text-xs text-gray-500 font-[var(--font-orbitron)] hidden sm:inline-block">
-              {t.contact.encrypted}
-            </span>
-            <button type="submit" className="btn-neon btn-solid w-full sm:w-auto px-10 py-3">
-              {t.contact.btn}
-            </button>
-          </div>
-        </form>
+<form onSubmit={handleContactSubmit} className="space-y-6">
+  <div className="grid grid-cols-1 gap-6">
+    <div>
+      <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.name}</label>
+      <input 
+        type="text" 
+        required 
+        className="tech-input" 
+        placeholder={t.contact.namePlaceholder}
+        value={formData.name}
+        onChange={(e) => setFormData({...formData, name: e.target.value})}
+        disabled={formStatus === "loading"}
+      />
+    </div>
+    <div>
+      <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.email}</label>
+      <input 
+        type="email" 
+        required 
+        className="tech-input" 
+        placeholder={t.contact.emailPlaceholder}
+        value={formData.email}
+        onChange={(e) => setFormData({...formData, email: e.target.value})}
+        disabled={formStatus === "loading"}
+      />
+    </div>
+  </div>
+  <div>
+    <label className="block text-cyan-500 text-xs font-[var(--font-orbitron)] mb-2">{t.contact.message}</label>
+    <textarea 
+      required 
+      className="tech-input h-32 resize-none" 
+      placeholder={t.contact.messagePlaceholder}
+      value={formData.message}
+      onChange={(e) => setFormData({...formData, message: e.target.value})}
+      disabled={formStatus === "loading"}
+    ></textarea>
+  </div>
+  
+  {/* Status Messages */}
+			{formStatus !== "idle" && (
+				<div className={`p-3 rounded border font-mono text-xs ${
+				formStatus === "success" ? "bg-green-900/20 border-green-500/50 text-green-400" :
+				formStatus === "error" ? "bg-red-900/20 border-red-500/50 text-red-400" :
+				"bg-cyan-900/20 border-cyan-500/50 text-cyan-400"
+				}`}>
+				{formStatus === "loading" ? "> მონაცემები იგზავნება..." : `> ${formMessage}`}
+				</div>
+			)}
+			
+			<div className="flex justify-between items-center pt-4 border-t border-cyan-900/30 mt-4">
+				<span className="text-xs text-gray-500 font-[var(--font-orbitron)] hidden sm:inline-block">
+				{t.contact.encrypted}
+				</span>
+				<button 
+				type="submit" 
+				className={`btn-neon btn-solid w-full sm:w-auto px-10 py-3 ${formStatus === "loading" ? "opacity-50 cursor-not-allowed" : ""}`}
+				disabled={formStatus === "loading"}
+				>
+				{formStatus === "loading" ? "იგზავნება..." : t.contact.btn}
+    </button>
+  </div>
+</form>
       </div>
 
       {/* Right Panel - Contact Info & Socials */}
@@ -1779,39 +1976,6 @@ export default function Home() {
       </footer>
     </>
   );
-}
-</file>
-
-<file path="package.json">
-{
-  "name": "italive-ge",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.4.0",
-    "nodemailer": "^10.1.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/nodemailer": "^8.0.2",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "autoprefixer": "^10.6.1",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.0",
-    "postcss": "^8.5.29",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^5"
-  }
 }
 </file>
 

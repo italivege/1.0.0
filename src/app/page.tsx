@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import BackgroundCanvas from "@/components/BackgroundCanvas";
 // 1. წავშალეთ ლოკალური თარგმანების იმპორტი და შემოვიტანეთ Context-ი
 import { useLanguage } from "@/context/LanguageContext";
+import { Turnstile } from "nextjs-turnstile"; // <--- კაპჩას იმპორტი
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("home");
@@ -11,34 +12,52 @@ export default function Home() {
   const [barKey, setBarKey] = useState(0); // ბარის ანიმაციის თავიდან დასაწყებად
   
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null); // <--- ტოკენის state
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formMessage, setFormMessage] = useState("");
-  const handleContactSubmit = async (e: React.FormEvent) => {
-	e.preventDefault();
-	setFormStatus("loading");
-	
-	try {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+ const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // 1. ვიღებთ ტოკენს პირდაპირ ფორმის უხილავი ველიდან (ყველაზე სანდო მეთოდი)
+    const formElement = e.target as HTMLFormElement;
+    const formDataObj = new FormData(formElement);
+    const token = formDataObj.get("cf-turnstile-response");
 
-    const data = await response.json();
-
-    if (response.ok) {
-      setFormStatus("success");
-      setFormMessage(data.message);
-      setFormData({ name: "", email: "", message: "" });
-    } else {
+    // 2. ვამოწმებთ, ნამდვილად გაიარა თუ არა მომხმარებელმა CAPTCHA
+    if (!token) {
       setFormStatus("error");
-      setFormMessage(data.message || "გაგზავნა ვერ მოხერხდა.");
+      setFormMessage("გთხოვთ გაიაროთ CAPTCHA გადამოწმება.");
+      return;
     }
-  } catch (error) {
-    setFormStatus("error");
-    setFormMessage("ქსელის შეცდომა.");
-  }
-};
+
+    setFormStatus("loading");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // 3. formData-სთან ერთად ვატანთ უშუალოდ ამოღებულ token-ს
+        body: JSON.stringify({ ...formData, token: token }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setFormStatus("success");
+        setFormMessage(data.message);
+        setFormData({ name: "", email: "", message: "" });
+        setTurnstileToken(null);
+      } else {
+        setFormStatus("error");
+        setFormMessage(data.message || "გაგზავნა ვერ მოხერხდა.");
+      }
+    } catch (error) {
+      setFormStatus("error");
+      setFormMessage("ქსელის შეცდომა.");
+    }
+  };
+  
+
 
   // 2. აქედან ვიღებთ ენას და თარგმანებს მთელი აპლიკაციისთვის (აღარ ვიყენებთ useState-ს)
   const { lang, setLang, t } = useLanguage();
@@ -47,7 +66,6 @@ export default function Home() {
     setActiveTab(tab);
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    
     if (tab === "services") {
       setBarKey(prev => prev + 1); // არესეტებს ანიმაციას
     }
@@ -669,6 +687,18 @@ export default function Home() {
       disabled={formStatus === "loading"}
     ></textarea>
   </div>
+  
+  {/* ---------------- აქ ჩასვი TURNSTILE ---------------- */}
+  <div className="flex justify-center my-4">
+    <Turnstile
+      sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!} 
+      onVerify={(token) => setTurnstileToken(token)}
+      onExpire={() => setTurnstileToken(null)}
+      onError={() => setTurnstileToken(null)}
+      theme="dark"
+    />
+  </div>
+  {/* ----------------------------------------------------- */}
   
   {/* Status Messages */}
 			{formStatus !== "idle" && (

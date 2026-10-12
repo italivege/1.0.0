@@ -115,6 +115,27 @@ export const translations = {
       service5Desc: "Comprehensive vulnerability assessments and zero-trust policy implementation.",
       service6Title: "Data Backup & Recovery",
       service6Desc: "Automated daily backups and rapid disaster recovery protocols."
+    },
+	auth: {
+      loginTitle1: "SYSTEM",
+      loginTitle2: "ACCESS",
+      loginDesc: "Enter your credentials to access the secure network.",
+      email: "COMM LINK (EMAIL)",
+      emailPlaceholder: "admin@italive.ge",
+      password: "ENCRYPTION KEY (PASSWORD)",
+      passwordPlaceholder: "••••••••",
+      btnLogin: "AUTHENTICATE",
+      noAccount: "No access clearance?",
+      registerLink: "Request Network Access",
+      
+      signupTitle1: "NETWORK",
+      signupTitle2: "REGISTRATION",
+      signupDesc: "Establish a new connection profile within our servers.",
+      name: "IDENTIFIER (FULL NAME)",
+      namePlaceholder: "John Doe",
+      btnSignup: "INITIALIZE PROFILE",
+      hasAccount: "Already have clearance?",
+      loginLink: "Authenticate Here"
     }
   },
   ka: {
@@ -233,6 +254,27 @@ export const translations = {
       service5Desc: "სისტემის მოწყვლადობის შემოწმება და ნულოვანი ნდობის (Zero-Trust) პოლიტიკის დანერგვა.",
       service6Title: "მონაცემთა ბექაფი და აღდგენა",
       service6Desc: "ყოველდღიური ავტომატური ბექაფები და მონაცემთა სწრაფი აღდგენა."
+    },
+	auth: {
+      loginTitle1: "სისტემაში",
+      loginTitle2: "შესვლა",
+      loginDesc: "შეიყვანეთ მონაცემები დაცულ ქსელში შესასვლელად.",
+      email: "საკომუნიკაციო არხი (ელ. ფოსტა)",
+      emailPlaceholder: "admin@italive.ge",
+      password: "დაშიფრული გასაღები (პაროლი)",
+      passwordPlaceholder: "••••••••",
+      btnLogin: "ავტორიზაცია",
+      noAccount: "არ გაქვთ წვდომა?",
+      registerLink: "ქსელში რეგისტრაცია",
+      
+      signupTitle1: "ქსელში",
+      signupTitle2: "რეგისტრაცია",
+      signupDesc: "შექმენით ახალი კავშირის პროფილი ჩვენს სერვერებზე.",
+      name: "იდენტიფიკატორი (სრული სახელი)",
+      namePlaceholder: "გიორგი მაისურაძე",
+      btnSignup: "პროფილის ინიციალიზაცია",
+      hasAccount: "უკვე გაქვთ წვდომა?",
+      loginLink: "გაიარეთ ავტორიზაცია"
     }
   }
 };

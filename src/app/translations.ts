@@ -96,7 +96,11 @@ export const translations = {
       phoneValue: "+995 591 918 930",
       emailLabel: "SECURE COMM",
       emailValue: "sandro@italive.ge",
-      socialLabel: "GLOBAL NETWORK"
+      socialLabel: "GLOBAL NETWORK",
+	  captchaError: "Please complete the CAPTCHA verification",
+	  captchaSendError: "Transmission failed",
+	  captchaNetError: "Network Error",
+	  captchaSending: "SENDING..."
     },
 	servicesPage: {
       title1: "IT OUTSOURCING &",
@@ -235,11 +239,15 @@ export const translations = {
       phoneValue: "+995 591 918 930",
       emailLabel: "დაცული ფოსტა",
       emailValue: "sandro@italive.ge",
-      socialLabel: "გლობალური ქსელი"
+      socialLabel: "გლობალური ქსელი",
+	  captchaError: "გთხოვთ გაიაროთ CAPTCHA გადამოწმება",
+	  captchaSendError: "გაგზავნა ვერ მოხერხდა",
+	  captchaNetError: "ქსელის შეცდომა",
+	  captchaSending: "იგზავნება..."
     },
 	servicesPage: {
-      title1: "IT აუთსორსინგი &",
-      title2: "IT სერვისი"
+      title1: "აიტი აუთსორსინგი &",
+      title2: "აიტი სერვისი"
     },
 	servicesList: {
       service1Title: "ქსელური ინფრასტრუქტურა",

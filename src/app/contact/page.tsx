@@ -50,7 +50,7 @@ export default function Contact() {
 
     if (!turnstileToken) {
       setFormStatus("error");
-      setFormMessage(t.lang === 'ka' ? "გთხოვთ გაიაროთ CAPTCHA გადამოწმება." : "Please complete the CAPTCHA verification.");
+      setFormMessage(t.contact.captchaError);
       return;
     }
 
@@ -77,11 +77,11 @@ export default function Contact() {
         setTurnstileToken(null);
       } else {
         setFormStatus("error");
-        setFormMessage(data.message || (t.lang === 'ka' ? "გაგზავნა ვერ მოხერხდა." : "Transmission failed."));
+        setFormMessage(data.message || (t.contact.captchaSendError));
       }
     } catch (error) {
       setFormStatus("error");
-      setFormMessage(t.lang === 'ka' ? "ქსელის შეცდომა." : "Network Error.");
+      setFormMessage(t.contact.captchaNetError);
     }
   };
 
@@ -167,7 +167,7 @@ export default function Contact() {
                     className={`btn-neon btn-solid w-full sm:w-auto px-10 py-3 ${formStatus === "loading" ? "opacity-50 cursor-not-allowed" : ""}`}
                     disabled={formStatus === "loading"}
                   >
-                    {formStatus === "loading" ? (t.lang === 'ka' ? "იგზავნება..." : "SENDING...") : t.contact.btn}
+                    {formStatus === "loading" ? (t.contact.captchaSending) : t.contact.btn}
                   </button>
                 </div>
               </form>

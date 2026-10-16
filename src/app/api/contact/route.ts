@@ -26,9 +26,36 @@ export async function POST(request: Request) {
     const { name, email, message, token } = body;
 
     // 1. CAPTCHA (Turnstile) ტოკენის შემოწმება
-    if (!token) {
+    if (!token || typeof token !== 'string') {
       return NextResponse.json(
         { message: 'გთხოვთ დაასრულოთ უსაფრთხოების გადამოწმება (CAPTCHA).' },
+        { status: 400 }
+      );
+    }
+
+    // 2. ვალიდაცია და სიგრძის შეზღუდვა
+    if (
+      !name || typeof name !== 'string' ||
+      !email || typeof email !== 'string' ||
+      !message || typeof message !== 'string'
+    ) {
+      return NextResponse.json(
+        { message: 'გთხოვთ შეავსოთ ყველა ველი.' },
+        { status: 400 }
+      );
+    }
+
+    const cleanName = name.replace(/[\r\n]/g, ' ').trim();
+    const cleanEmail = email.replace(/[\r\n]/g, '').trim();
+    const cleanMessage = message.trim();
+
+    if (
+      cleanName.length === 0 || cleanName.length > 100 ||
+      cleanEmail.length === 0 || cleanEmail.length > 150 ||
+      cleanMessage.length === 0 || cleanMessage.length > 5000
+    ) {
+      return NextResponse.json(
+        { message: 'შეყვანილი მონაცემების ზომა აჭარბებს დასაშვებ ლიმიტს.' },
         { status: 400 }
       );
     }
@@ -50,7 +77,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. IP და გლობალური Rate Limiting შემოწმება
+    // 3. IP და გლობალური Rate Limiting შემოწმება
     const forwardedFor = request.headers.get('x-forwarded-for');
     const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown_ip';
 
@@ -72,14 +99,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. ვალიდაცია
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { message: 'გთხოვთ შეავსოთ ყველა ველი.' },
-        { status: 400 }
-      );
-    }
-
     // 4. Nodemailer გაგზავნა
     const port = Number(process.env.SMTP_PORT) || 465;
     const transporter = nodemailer.createTransport({
@@ -94,10 +113,10 @@ export async function POST(request: Request) {
 
     const mailOptions = {
       from: process.env.SMTP_USER,
-      replyTo: email,
+      replyTo: cleanEmail,
       to: process.env.RECEIVER_EMAIL,
-      subject: `ახალი შეტყობინება ITalive.ge-დან: ${name}`,
-      text: `სახელი: ${name}\nელ-ფოსტა: ${email}\nIP: ${ip}\n\nშეტყობინება:\n${message}`,
+      subject: `ახალი შეტყობინება ITalive.ge-დან: ${cleanName}`,
+      text: `სახელი: ${cleanName}\nელ-ფოსტა: ${cleanEmail}\nIP: ${ip}\n\nშეტყობინება:\n${cleanMessage}`,
     };
 
     await transporter.sendMail(mailOptions);
@@ -106,10 +125,10 @@ export async function POST(request: Request) {
       { message: 'შეტყობინება წარმატებით გაიგზავნა!' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Email send error:', error);
     return NextResponse.json(
-      { message: `სერვერის შეცდომა: ${error.message || 'უცნობი ერორი'}` },
+      { message: 'სერვერის დროებითი შეფერხება. გთხოვთ სცადოთ მოგვიანებით.' },
       { status: 500 }
     );
   }

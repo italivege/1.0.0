@@ -140,6 +140,35 @@ export const translations = {
       btnSignup: "INITIALIZE PROFILE",
       hasAccount: "Already have clearance?",
       loginLink: "Authenticate Here"
+    },
+	itadesk: {
+      badge: "REMOTE DESK // SECURE NODE",
+      title1: "ITADESK",
+      title2: "REMOTE ACCESS",
+      desc: "Enterprise-grade secure remote desktop protocol designed by italive.ge. Fast, encrypted, and built for IT professionals.",
+      downloadBtn: "DOWNLOAD ITADESK",
+      smartScreenTitle: "WINDOWS SMARTSCREEN VERIFICATION",
+      smartScreenDesc: "ITADesk uses direct P2P native execution. If Windows Defender SmartScreen displays a prompt on first launch, click 'More info' and then 'Run anyway'.",
+      featuresTitle: "CORE CAPABILITIES",
+      feat1Title: "End-to-End Encryption",
+      feat1Desc: "AES-256 & WebRTC DTLS military-grade session encryption ensuring total data privacy.",
+      feat2Title: "Zero Latency Routing",
+      feat2Desc: "Optimized direct-node connection protocols for smooth screen streaming.",
+      feat3Title: "Zero-Trust UAC Control",
+      feat3Desc: "View-only by default. Mouse, keyboard, and file transfers require explicit host UAC elevation and real-time consent."
+    },
+    terms: {
+      title1: "LEGAL",
+      title2: "PROTOCOL",
+      lastUpdated: "LAST UPDATED: OCTOBER 2026",
+      sec1Title: "1. ACCEPTANCE OF TERMS",
+      sec1Desc: "By accessing italive.ge and utilizing our software (including ITADesk), you agree to be bound by these strict technical and legal protocols.",
+      sec2Title: "2. ITADESK LIABILITY LIMITATION (CRITICAL)",
+      sec2Desc: "ITADesk is a peer-to-peer connection tool provided 'AS IS'. The developer (italive.ge) assumes ZERO LIABILITY for any data loss, security breaches, unauthorized access, or damages resulting from its use. NEVER share your Desk ID with unknown entities. We are strictly not responsible for third-party scams, social engineering, or misuse of the protocol. You use this tool entirely at your own risk.",
+      sec3Title: "3. PRIVACY PROTOCOL, TELEMETRY & AUTO-UPDATES",
+      sec3Desc: "Screen streams and file transfers occur directly peer-to-peer (P2P) via encrypted WebRTC DTLS channels and are never viewed, stored, or routed through our servers. To prevent brute-force attacks and unauthorized scanning, our signaling server logs connection metadata (IP address, timestamp, and temporary Desk ID) strictly upon user consent. Security logs are retained for a maximum of 365 days and are automatically purged thereafter. The client application checks for and applies official security updates from italive.ge.",
+      sec4Title: "4. NO WARRANTY",
+      sec4Desc: "We provide no guarantees regarding network uptime, cross-platform stability, or fitness for a particular administrative purpose."
     }
   },
   ka: {
@@ -283,6 +312,35 @@ export const translations = {
       btnSignup: "პროფილის ინიციალიზაცია",
       hasAccount: "უკვე გაქვთ წვდომა?",
       loginLink: "გაიარეთ ავტორიზაცია"
+    },
+itadesk: {
+      badge: "დისტანციური მართვა // დაცული კვანძი",
+      title1: "ITADESK",
+      title2: "დისტანციური წვდომა",
+      desc: "italive.ge-ს მიერ შექმნილი კორპორატიული დონის უსაფრთხო დისტანციური მართვის პროტოკოლი. სწრაფი, დაშიფრული და IT პროფესიონალებისთვის შექმნილი.",
+      downloadBtn: "ITADESK გადმოწერა",
+      smartScreenTitle: "ინსტრუქცია გაშვებისას (WINDOWS SMARTSCREEN)",
+      smartScreenDesc: "პირველი გაშვებისას, თუ Windows SmartScreen-მა გამოიტანა უსაფრთხოების ფანჯარა, დააჭირეთ ღილაკს „More info“ და შემდეგ „Run anyway“.",
+      featuresTitle: "ძირითადი შესაძლებლობები",
+      feat1Title: "ბოლოდან ბოლომდე შიფრაცია",
+      feat1Desc: "AES-256 და WebRTC DTLS სამხედრო დონის სესიის შიფრაცია მონაცემთა სრული კონფიდენციალურობისთვის.",
+      feat2Title: "ნულოვანი დაყოვნება",
+      feat2Desc: "ოპტიმიზებული პირდაპირი კვანძის პროტოკოლები ეკრანის შეუფერხებელი სტრიმინგისთვის.",
+      feat3Title: "Zero-Trust უფლებების მართვა",
+      feat3Desc: "სტანდარტულ რეჟიმში დაშვებულია მხოლოდ ეკრანის ჩვენება. მაუსის, კლავიატურის და ფაილების წვდომა მოითხოვს ჰოსტის დასტურს."
+    },
+    terms: {
+      title1: "იურიდიული",
+      title2: "პროტოკოლი",
+      lastUpdated: "ბოლო განახლება: ოქტომბერი 2026",
+      sec1Title: "1. წესებზე თანხმობა",
+      sec1Desc: "italive.ge-ს და ჩვენი პროგრამული უზრუნველყოფის (მათ შორის ITADesk) გამოყენებით, თქვენ სრულად ეთანხმებით ამ იურიდიულ პირობებს.",
+      sec2Title: "2. ITADESK - პასუხისმგებლობის შეზღუდვა (მკაცრი)",
+      sec2Desc: "ITADesk არის დისტანციური წვდომის ინსტრუმენტი, რომელიც მოწოდებულია 'როგორც არის' (AS IS) პრინციპით. დეველოპერი (italive.ge) იხსნის აბსოლუტურად ყოველგვარ პასუხისმგებლობას ნებისმიერ მონაცემთა დაკარგვაზე, უნებართვო წვდომაზე ან ზარალზე, რაც გამოწვეულია პროგრამის გამოყენებით. არასდროს გაუზიაროთ თქვენი კავშირის ID უცხო პირებს. ჩვენ არ ვაგებთ პასუხს მესამე პირების თაღლითობაზე ან პროტოკოლის ბოროტად გამოყენებაზე. პროგრამას იყენებთ მხოლოდ თქვენი რისკის ქვეშ.",
+      sec3Title: "3. კონფიდენციალურობის პოლიტიკა, ლოგირება და განახლებები",
+      sec3Desc: "ეკრანის გამოსახულება და ფაილების გადაგზავნა ხორციელდება პირდაპირ მოწყობილობებს შორის (P2P) დაშიფრული WebRTC DTLS არხით და არ გადის ან ინახება ჩვენს სერვერზე. კიბერშეტევებისა და პაროლის შერჩევის (Brute-Force) პრევენციის მიზნით, სასიგნალო სერვერი მომხმარებლის თანხმობის საფუძველზე აღრიცხავს კავშირის მეტამონაცემებს (IP მისამართი, დრო და დროებითი Desk ID). უსაფრთხოების ჟურნალი ინახება მაქსიმუმ 365 დღის ვადით, რის შემდეგაც ავტომატურად იშლება. აპლიკაცია ავტომატურად ამოწმებს და იღებს უსაფრთხოების განახლებებს italive.ge-დან.",
+      sec4Title: "4. გარანტიის უარყოფა",
+      sec4Desc: "ჩვენ არ ვიძლევით იურიდიულ ან ტექნიკურ გარანტიას სისტემის უწყვეტ მუშაობაზე ან კონკრეტული მიზნისთვის ვარგისიანობაზე."
     }
   }
 };

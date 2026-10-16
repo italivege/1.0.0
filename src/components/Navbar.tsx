@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: t.nav.solutions, path: '/solutions' },
     { name: t.nav.services, path: '/services' },
     { name: t.nav.contact, path: '/contact' },
+	{ name: "ITADESK", path: '/itadesk' }, // <--- ახალი ლინკი
   ];
 
   return (

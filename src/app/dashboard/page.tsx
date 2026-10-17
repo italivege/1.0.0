@@ -116,14 +116,35 @@ export default function Dashboard() {
   const activeCompanyObj = companies.find((c) => c.id === selectedCompany);
 
   // 1-ხაზიანი საინსტალაციო ბრძანება კონკრეტული კომპანიისა და მოწყობილობისთვის
-  const deployCommand = `sudo mkdir -p /etc/italive && cat << 'EOF' | sudo tee /etc/italive/guardian.conf > /dev/null
+// სრული 1-ხაზიანი ავტო-ინსტალატორი ნებისმიერი ახალი Ubuntu სერვერისთვის
+  const deployCommand = `sudo apt update && sudo apt install -y suricata curl && \\
+sudo suricata-update && sudo systemctl restart suricata && \\
+sudo curl -sL https://www.italive.ge/italive-guardian -o /usr/local/bin/italive-guardian && \\
+sudo chmod +x /usr/local/bin/italive-guardian && \\
+sudo mkdir -p /etc/italive && cat << 'EOF' | sudo tee /etc/italive/guardian.conf > /dev/null
 COMPANY_ID="${selectedCompany}"
 COMPANY_TOKEN="${activeCompanyObj?.token || ""}"
 DEVICE_NAME="${customDeviceName.trim()}"
 API_URL="https://www.italive.ge/api/logs"
 SURICATA_LOG="/var/log/suricata/eve.json"
 EOF
-sudo chmod 600 /etc/italive/guardian.conf && sudo systemctl restart italive-guardian`;
+sudo chmod 600 /etc/italive/guardian.conf && \\
+cat << 'EOF' | sudo tee /etc/systemd/system/italive-guardian.service > /dev/null
+[Unit]
+Description=ITalive Security Telemetry Guardian Agent
+After=network.target suricata.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/italive-guardian
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload && sudo systemctl enable --now italive-guardian && sudo systemctl restart italive-guardian`;
 
   const copyCommand = () => {
     navigator.clipboard.writeText(deployCommand);

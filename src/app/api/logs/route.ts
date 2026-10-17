@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
-// გასაღებს კითხულობს პირდაპირ .env.local-იდან ან AWS Amplify-ს Environment Variables-იდან
+export const dynamic = "force-dynamic";
+
 const API_SECRET = process.env.GUARDIAN_API_KEY;
 
 export interface Company {
@@ -28,7 +29,6 @@ const DEFAULT_COMPANIES: Company[] = [
   { id: "medi-cloud", name: "MediCloud Georgia", createdAt: "2026-10-17" },
 ];
 
-// სარეზერვო მეხსიერება (თუ Redis დროებით მიუწვდომელია, 500 შეცდომა რომ არასდროს ამოაგდოს)
 const globalStore = globalThis as unknown as {
   __guardianCompanies?: Company[];
   __guardianLogs?: Record<string, SecurityLog[]>;
@@ -52,6 +52,34 @@ function getRedisClient(): Redis | null {
   }
 }
 
+// დუბლირების შემოწმების დამხმარე ფუნქცია
+function isDuplicateLog(existingLogs: SecurityLog[], candidate: SecurityLog): boolean {
+  return existingLogs.some(
+    (log) =>
+      log.company_id === candidate.company_id &&
+      log.hostname === candidate.hostname &&
+      log.signature === candidate.signature &&
+      log.src_ip === candidate.src_ip &&
+      log.dest_ip === candidate.dest_ip
+  );
+}
+
+// უნიკალური ლოგების გაფილტვრა წამოღებისას (ძველი დუბლიკატებიც რომ გაქრეს)
+function deduplicateLogs(logs: SecurityLog[], companyId: string): SecurityLog[] {
+  const seen = new Set<string>();
+  const result: SecurityLog[] = [];
+
+  for (const log of logs) {
+    if (log.company_id !== companyId) continue;
+    const key = `${log.hostname}|${log.signature}|${log.src_ip}|${log.dest_ip}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(log);
+    }
+  }
+  return result;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const companyId = searchParams.get("company_id") || "italive-core";
@@ -64,21 +92,24 @@ export async function GET(request: Request) {
         companies = DEFAULT_COMPANIES;
         await redis.set("guardian:companies", companies);
       }
-      const rawLogs = await redis.lrange<SecurityLog>(`guardian:logs:${companyId}`, 0, 99);
+      const rawLogs = await redis.lrange<SecurityLog>(`guardian:logs:${companyId}`, 0, 199);
+      const uniqueCompanyLogs = deduplicateLogs(rawLogs || [], companyId);
+
       return NextResponse.json({
         storage: "redis",
         companies,
-        logs: rawLogs || [],
+        logs: uniqueCompanyLogs,
       });
     } catch (err) {
       console.warn("Redis GET fallback to memory:", err);
     }
   }
 
+  const memLogs = globalStore.__guardianLogs?.[companyId] || [];
   return NextResponse.json({
     storage: "memory",
     companies: globalStore.__guardianCompanies || DEFAULT_COMPANIES,
-    logs: globalStore.__guardianLogs?.[companyId] || [],
+    logs: deduplicateLogs(memLogs, companyId),
   });
 }
 
@@ -87,7 +118,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const redis = getRedisClient();
 
-    // A) თუ საიტის Dashboard-იდან ახალ ქვე-კომპანიას ვამატებთ
+    // A) ახალი ქვე-კომპანიის შექმნა
     if (body.action === "create_company") {
       const cleanName = String(body.name || "").trim();
       const cleanId = String(body.id || "")
@@ -127,7 +158,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ companies: memCompanies }, { status: 200 });
     }
 
-    // B) თუ Rust აგენტი გვიგზავნის ლოგს — ვამოწმებთ .env-ში გაწერილ GUARDIAN_API_KEY-ს
+    // B) Rust აგენტიდან ლოგის მიღება
     const apiKey = request.headers.get("x-api-key");
     if (!API_SECRET || apiKey !== API_SECRET) {
       return NextResponse.json({ message: "Unauthorized Guardian Node" }, { status: 401 });
@@ -146,23 +177,16 @@ export async function POST(request: Request) {
       timestamp: String(body.timestamp || new Date().toISOString()),
     };
 
-    // 1. ვინახავთ სარეზერვო მეხსიერებაში
-    const memCompanies = globalStore.__guardianCompanies || [...DEFAULT_COMPANIES];
-    if (!memCompanies.some((c) => c.id === companyId)) {
-      memCompanies.push({
-        id: companyId,
-        name: String(body.company_name || companyId.toUpperCase()),
-        createdAt: new Date().toISOString().split("T")[0],
-      });
-      globalStore.__guardianCompanies = memCompanies;
-    }
+    // 1. სარეზერვო მეხსიერება (დუბლირების შემოწმებით)
     if (!globalStore.__guardianLogs![companyId]) {
       globalStore.__guardianLogs![companyId] = [];
     }
-    globalStore.__guardianLogs![companyId].unshift(logEntry);
-    globalStore.__guardianLogs![companyId] = globalStore.__guardianLogs![companyId].slice(0, 200);
+    if (!isDuplicateLog(globalStore.__guardianLogs![companyId], logEntry)) {
+      globalStore.__guardianLogs![companyId].unshift(logEntry);
+      globalStore.__guardianLogs![companyId] = globalStore.__guardianLogs![companyId].slice(0, 200);
+    }
 
-    // 2. ვინახავთ Redis-ში
+    // 2. Redis ბაზა (დუბლირების შემოწმებით)
     if (redis) {
       try {
         const rCompanies = (await redis.get<Company[]>("guardian:companies")) || [...DEFAULT_COMPANIES];
@@ -176,6 +200,12 @@ export async function POST(request: Request) {
         }
 
         const redisKey = `guardian:logs:${companyId}`;
+        const existingRedisLogs = (await redis.lrange<SecurityLog>(redisKey, 0, 199)) || [];
+
+        if (isDuplicateLog(existingRedisLogs, logEntry)) {
+          return NextResponse.json({ status: "duplicate_ignored" }, { status: 200 });
+        }
+
         await redis.lpush(redisKey, logEntry);
         await redis.ltrim(redisKey, 0, 199);
       } catch (redisErr) {
@@ -186,7 +216,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: "logged", id: logEntry.id }, { status: 200 });
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : "Unknown error";
-    console.error("Guardian POST error:", errMsg);
     return NextResponse.json({ message: "Server error", error: errMsg }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 interface Company {
   id: string;
@@ -27,7 +27,6 @@ export default function Dashboard() {
   const [selectedHostname, setSelectedHostname] = useState<string>("ALL");
   const [loading, setLoading] = useState<boolean>(true);
 
-  // ახალი კომპანიის დამატების ფორმა
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [newCompName, setNewCompName] = useState<string>("");
   const [newCompId, setNewCompId] = useState<string>("");
@@ -40,7 +39,11 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setCompanies(data.companies || []);
-        setLogs(data.logs || []);
+        // ვინახავთ მხოლოდ არჩეული კომპანიის ლოგებს
+        const strictCompanyLogs = (data.logs || []).filter(
+          (l: SecurityLog) => l.company_id === compId
+        );
+        setLogs(strictCompanyLogs);
       }
     } catch (err) {
       console.error("Failed to fetch logs:", err);
@@ -49,9 +52,12 @@ export default function Dashboard() {
     }
   }, []);
 
-  // ავტომატური განახლება ყოველ 3 წამში (Live Stream)
   useEffect(() => {
+    // კომპანიის შეცვლისთანავე ვასუფთავებთ წინა კომპანიის სიას, რომ სხვა მოწყობილობები არ გამოჩნდეს
+    setLogs([]);
+    setSelectedHostname("ALL");
     setLoading(true);
+
     fetchDashboardData(selectedCompany);
     const interval = setInterval(() => {
       fetchDashboardData(selectedCompany);
@@ -59,7 +65,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [selectedCompany, fetchDashboardData]);
 
-  // ახალი ქვე-კომპანიის შექმნა
   const handleCreateCompany = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCompName || !newCompId) return;
@@ -84,21 +89,34 @@ export default function Dashboard() {
     }
   };
 
-  // უნიკალური Hostname-ების ამოღება არჩეული კომპანიის ლოგებიდან
-  const uniqueHostnames = Array.from(new Set(logs.map((l) => l.hostname)));
+  // 1. მხოლოდ არჩეული კომპანიის უნიკალური (არადუბლირებული) ლოგები
+  const companyUniqueLogs = useMemo(() => {
+    const seen = new Set<string>();
+    return logs.filter((log) => {
+      if (log.company_id !== selectedCompany) return false;
+      const key = `${log.hostname}|${log.signature}|${log.src_ip}|${log.dest_ip}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [logs, selectedCompany]);
 
-  // გაფილტრული ლოგები Hostname-ის მიხედვით
-  const filteredLogs =
-    selectedHostname === "ALL"
-      ? logs
-      : logs.filter((l) => l.hostname === selectedHostname);
+  // 2. მხოლოდ არჩეული კომპანიის მოწყობილობები (Hostnames)
+  const uniqueHostnames = useMemo(() => {
+    return Array.from(new Set(companyUniqueLogs.map((l) => l.hostname)));
+  }, [companyUniqueLogs]);
+
+  // 3. არჩეული მოწყობილობის მიხედვით გაფილტრული ლოგები
+  const filteredLogs = useMemo(() => {
+    if (selectedHostname === "ALL") return companyUniqueLogs;
+    return companyUniqueLogs.filter((l) => l.hostname === selectedHostname);
+  }, [companyUniqueLogs, selectedHostname]);
 
   const criticalCount = filteredLogs.filter((l) => l.severity === 1).length;
   const activeCompanyObj = companies.find((c) => c.id === selectedCompany);
 
   return (
     <div className="animate-[fadeIn_0.5s_ease-out_forwards] w-full pt-6 pb-20">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-cyan-500/20 pb-6">
         <div>
           <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-2 tracking-widest uppercase">
@@ -123,7 +141,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ახალი ქვე-კომპანიის დამატების პანელი */}
       {showAddModal && (
         <div className="tech-panel p-6 neon-border mb-8">
           <h3 className="font-[var(--font-orbitron)] text-cyan-400 text-sm mb-4 uppercase">
@@ -173,7 +190,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* მარცხენა პანელი: ქვე-კომპანიების სია */}
+        {/* მარცხენა პანელი: კომპანიები და მხოლოდ არჩეული კომპანიის მოწყობილობები */}
         <div className="lg:col-span-1 space-y-6">
           <div className="tech-panel p-5 neon-border">
             <h3 className="font-[var(--font-orbitron)] text-xs text-cyan-400 tracking-wider uppercase mb-4 border-b border-cyan-900/50 pb-2">
@@ -185,10 +202,7 @@ export default function Dashboard() {
                 return (
                   <button
                     key={comp.id}
-                    onClick={() => {
-                      setSelectedCompany(comp.id);
-                      setSelectedHostname("ALL");
-                    }}
+                    onClick={() => setSelectedCompany(comp.id)}
                     className={`w-full text-left p-3 rounded border transition-all flex flex-col gap-1 ${
                       isSelected
                         ? "bg-cyan-500/20 border-cyan-400 text-white shadow-[0_0_12px_rgba(0,243,255,0.3)]"
@@ -207,11 +221,14 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* კონკრეტული კომპანიის მოწყობილობები (Hostnames) */}
           <div className="tech-panel p-5 neon-border">
-            <h3 className="font-[var(--font-orbitron)] text-xs text-cyan-400 tracking-wider uppercase mb-4 border-b border-cyan-900/50 pb-2">
-              DETECTED HOSTNAMES ({uniqueHostnames.length})
+            <h3 className="font-[var(--font-orbitron)] text-xs text-cyan-400 tracking-wider uppercase mb-1">
+              COMPANY DEVICES ({uniqueHostnames.length})
             </h3>
+            <p className="font-mono text-[11px] text-gray-500 mb-4 border-b border-cyan-900/50 pb-2">
+              Tenant: {selectedCompany}
+            </p>
+
             <div className="space-y-2">
               <button
                 onClick={() => setSelectedHostname("ALL")}
@@ -221,31 +238,37 @@ export default function Dashboard() {
                     : "border-transparent text-gray-400 hover:text-white"
                 }`}
               >
-                🌐 ALL DEVICES ({logs.length})
+                🌐 ALL COMPANY DEVICES ({companyUniqueLogs.length})
               </button>
-              {uniqueHostnames.map((host) => (
-                <button
-                  key={host}
-                  onClick={() => setSelectedHostname(host)}
-                  className={`w-full text-left px-3 py-2 rounded font-mono text-xs border flex justify-between items-center ${
-                    selectedHostname === host
-                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
-                      : "border-cyan-900/30 text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <span>🖥️ {host}</span>
-                  <span className="text-[10px] bg-cyan-950 px-2 py-0.5 rounded text-cyan-400">
-                    {logs.filter((l) => l.hostname === host).length}
-                  </span>
-                </button>
-              ))}
+
+              {uniqueHostnames.length === 0 ? (
+                <div className="text-xs font-mono text-gray-500 py-3 px-2">
+                  ამ კომპანიაზე მოწყობილობა ჯერ არ ფიქსირდება.
+                </div>
+              ) : (
+                uniqueHostnames.map((host) => (
+                  <button
+                    key={host}
+                    onClick={() => setSelectedHostname(host)}
+                    className={`w-full text-left px-3 py-2 rounded font-mono text-xs border flex justify-between items-center ${
+                      selectedHostname === host
+                        ? "bg-cyan-500/20 border-cyan-400 text-cyan-300"
+                        : "border-cyan-900/30 text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <span>🖥️ {host}</span>
+                    <span className="text-[10px] bg-cyan-950 px-2 py-0.5 rounded text-cyan-400">
+                      {companyUniqueLogs.filter((l) => l.hostname === host).length}
+                    </span>
+                  </button>
+                ))
+              )}
             </div>
           </div>
         </div>
 
-        {/* მარჯვენა მთავარი პანელი: არჩეული კომპანიის მეტრიკები და ლოგები */}
+        {/* მარჯვენა პანელი: არჩეული კომპანიის ლოგები */}
         <div className="lg:col-span-3 space-y-6">
-          {/* სტატისტიკის ბარათები */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="tech-panel p-5 neon-border">
               <span className="text-xs font-[var(--font-orbitron)] text-gray-400 block mb-1">
@@ -261,19 +284,19 @@ export default function Dashboard() {
 
             <div className="tech-panel p-5 neon-border">
               <span className="text-xs font-[var(--font-orbitron)] text-gray-400 block mb-1">
-                ONLINE GUARDIAN NODES
+                COMPANY DEVICES
               </span>
               <span className="text-3xl font-mono font-bold text-cyan-400">
                 {uniqueHostnames.length}
               </span>
               <span className="text-xs text-gray-500 block mt-1">
-                Reporting Hostnames
+                Active Hostnames in {selectedCompany}
               </span>
             </div>
 
             <div className="tech-panel p-5 neon-border">
               <span className="text-xs font-[var(--font-orbitron)] text-gray-400 block mb-1">
-                CAPTURED ALERTS
+                UNIQUE ALERTS
               </span>
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-mono font-bold text-white">
@@ -286,12 +309,11 @@ export default function Dashboard() {
                 )}
               </div>
               <span className="text-xs text-gray-500 block mt-1">
-                Real-time Suricata Events
+                Deduplicated Events
               </span>
             </div>
           </div>
 
-          {/* ლოგების ცხრილი / ტერმინალი */}
           <div className="tech-panel neon-border overflow-hidden">
             <div className="bg-[#050d1a] px-6 py-4 border-b border-cyan-500/30 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
               <div className="flex items-center gap-2">
@@ -303,22 +325,22 @@ export default function Dashboard() {
                 </span>
               </div>
               <span className="font-mono text-xs text-gray-500">
-                SHOWING LATEST {filteredLogs.length} EVENTS
+                SHOWING {filteredLogs.length} UNIQUE EVENTS
               </span>
             </div>
 
             <div className="p-4 overflow-x-auto max-h-[600px] overflow-y-auto">
-              {loading && logs.length === 0 ? (
+              {loading && filteredLogs.length === 0 ? (
                 <div className="text-center py-16 font-mono text-cyan-400 animate-pulse">
                   &gt; SYNCHRONIZING TELEMETRY STREAM...
                 </div>
               ) : filteredLogs.length === 0 ? (
                 <div className="text-center py-16 space-y-2">
                   <p className="font-[var(--font-orbitron)] text-gray-400 text-lg">
-                    NO ALERTS DETECTED FOR THIS INFRASTRUCTURE
+                    NO ALERTS DETECTED FOR {activeCompanyObj?.name.toUpperCase() || selectedCompany.toUpperCase()}
                   </p>
                   <p className="font-mono text-xs text-gray-500">
-                    Rust აგენტში მიუთითე company_id: &quot;{selectedCompany}&quot; ლოგების მისაღებად.
+                    ამ კომპანიის ინფრასტრუქტურაზე (`company_id: &quot;{selectedCompany}&quot;`) საფრთხეები არ ფიქსირდება.
                   </p>
                 </div>
               ) : (

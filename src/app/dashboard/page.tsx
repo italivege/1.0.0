@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 interface Company {
   id: string;
   name: string;
+  token: string;
   createdAt: string;
 }
 
@@ -28,6 +29,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [showDeployModal, setShowDeployModal] = useState<boolean>(false);
+  const [customDeviceName, setCustomDeviceName] = useState<string>("");
+  const [copied, setCopied] = useState<boolean>(false);
+
   const [newCompName, setNewCompName] = useState<string>("");
   const [newCompId, setNewCompId] = useState<string>("");
 
@@ -39,7 +44,6 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setCompanies(data.companies || []);
-        // ვინახავთ მხოლოდ არჩეული კომპანიის ლოგებს
         const strictCompanyLogs = (data.logs || []).filter(
           (l: SecurityLog) => l.company_id === compId
         );
@@ -53,7 +57,6 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    // კომპანიის შეცვლისთანავე ვასუფთავებთ წინა კომპანიის სიას, რომ სხვა მოწყობილობები არ გამოჩნდეს
     setLogs([]);
     setSelectedHostname("ALL");
     setLoading(true);
@@ -89,7 +92,6 @@ export default function Dashboard() {
     }
   };
 
-  // 1. მხოლოდ არჩეული კომპანიის უნიკალური (არადუბლირებული) ლოგები
   const companyUniqueLogs = useMemo(() => {
     const seen = new Set<string>();
     return logs.filter((log) => {
@@ -101,12 +103,10 @@ export default function Dashboard() {
     });
   }, [logs, selectedCompany]);
 
-  // 2. მხოლოდ არჩეული კომპანიის მოწყობილობები (Hostnames)
   const uniqueHostnames = useMemo(() => {
     return Array.from(new Set(companyUniqueLogs.map((l) => l.hostname)));
   }, [companyUniqueLogs]);
 
-  // 3. არჩეული მოწყობილობის მიხედვით გაფილტრული ლოგები
   const filteredLogs = useMemo(() => {
     if (selectedHostname === "ALL") return companyUniqueLogs;
     return companyUniqueLogs.filter((l) => l.hostname === selectedHostname);
@@ -115,31 +115,110 @@ export default function Dashboard() {
   const criticalCount = filteredLogs.filter((l) => l.severity === 1).length;
   const activeCompanyObj = companies.find((c) => c.id === selectedCompany);
 
+  // 1-ხაზიანი საინსტალაციო ბრძანება კონკრეტული კომპანიისა და მოწყობილობისთვის
+  const deployCommand = `sudo mkdir -p /etc/italive && cat << 'EOF' | sudo tee /etc/italive/guardian.conf > /dev/null
+COMPANY_ID="${selectedCompany}"
+COMPANY_TOKEN="${activeCompanyObj?.token || ""}"
+DEVICE_NAME="${customDeviceName.trim()}"
+API_URL="https://www.italive.ge/api/logs"
+SURICATA_LOG="/var/log/suricata/eve.json"
+EOF
+sudo chmod 600 /etc/italive/guardian.conf && sudo systemctl restart italive-guardian`;
+
+  const copyCommand = () => {
+    navigator.clipboard.writeText(deployCommand);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="animate-[fadeIn_0.5s_ease-out_forwards] w-full pt-6 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-cyan-500/20 pb-6">
         <div>
           <div className="inline-block border border-cyan-500/50 bg-cyan-900/20 px-3 py-1 rounded text-cyan-400 font-[var(--font-orbitron)] text-xs mb-2 tracking-widest uppercase">
-            SIEM // GUARDIAN TELEMETRY
+            SIEM // MULTI-TENANT GUARDIAN
           </div>
           <h1 className="text-3xl md:text-4xl font-[var(--font-orbitron)] font-bold text-white">
             SECURITY <span className="neon-text">DASHBOARD</span>
           </h1>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#0a1423] border border-green-500/40 px-4 py-2 rounded">
-            <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-ping"></span>
-            <span className="font-mono text-xs text-green-400">LIVE STREAM ACTIVE (3s)</span>
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={() => setShowAddModal(!showAddModal)}
+            onClick={() => {
+              setShowDeployModal(!showDeployModal);
+              setShowAddModal(false);
+            }}
+            className="btn-neon btn-solid text-xs py-2.5 px-5"
+          >
+            ⚡ DEPLOY AGENT ({selectedCompany})
+          </button>
+          <button
+            onClick={() => {
+              setShowAddModal(!showAddModal);
+              setShowDeployModal(false);
+            }}
             className="btn-neon text-xs py-2.5 px-5"
           >
             + ADD COMPANY
           </button>
         </div>
       </div>
+
+      {/* მოწყობილობაზე აგენტის დაყენების გენერატორი */}
+      {showDeployModal && (
+        <div className="tech-panel p-6 neon-border mb-8">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="font-[var(--font-orbitron)] text-cyan-400 text-sm uppercase">
+                DEPLOY GUARDIAN NODE FOR: <span className="text-white">{activeCompanyObj?.name}</span>
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                ეს კონფიგურაცია იყენებს მხოლოდ ამ კომპანიის დაცულ ტოკენს. სხვა კომპანიის ლოგებთან წვდომა შეუძლებელია.
+              </p>
+            </div>
+            <button onClick={() => setShowDeployModal(false)} className="text-gray-400 hover:text-white">
+              ✕
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs text-cyan-400 font-[var(--font-orbitron)] mb-1">
+                CUSTOM DEVICE HOSTNAME (არასავალდებულო)
+              </label>
+              <input
+                type="text"
+                placeholder="მაგ: branch-router-01 (ცარიელი = სისტემური /etc/hostname)"
+                className="tech-input font-mono text-xs"
+                value={customDeviceName}
+                onChange={(e) => setCustomDeviceName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-cyan-400 font-[var(--font-orbitron)] mb-1">
+                UNIQUE COMPANY TOKEN
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={activeCompanyObj?.token || ""}
+                className="tech-input font-mono text-xs text-green-400"
+              />
+            </div>
+          </div>
+
+          <div className="bg-[#02060d] border border-cyan-500/30 rounded p-4 font-mono text-xs text-cyan-300 overflow-x-auto relative">
+            <pre className="whitespace-pre-wrap">{deployCommand}</pre>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <button onClick={copyCommand} className="btn-neon btn-solid text-xs py-2 px-6">
+              {copied ? "✓ COPIED TO CLIPBOARD!" : "COPY CONFIGURATION COMMAND"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {showAddModal && (
         <div className="tech-panel p-6 neon-border mb-8">
@@ -162,7 +241,7 @@ export default function Dashboard() {
             </div>
             <div>
               <label className="block text-xs text-gray-400 font-[var(--font-orbitron)] mb-1">
-                COMPANY ID (RUST AGENT KEY)
+                COMPANY ID
               </label>
               <input
                 type="text"
@@ -190,7 +269,6 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* მარცხენა პანელი: კომპანიები და მხოლოდ არჩეული კომპანიის მოწყობილობები */}
         <div className="lg:col-span-1 space-y-6">
           <div className="tech-panel p-5 neon-border">
             <h3 className="font-[var(--font-orbitron)] text-xs text-cyan-400 tracking-wider uppercase mb-4 border-b border-cyan-900/50 pb-2">
@@ -267,7 +345,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* მარჯვენა პანელი: არჩეული კომპანიის ლოგები */}
         <div className="lg:col-span-3 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="tech-panel p-5 neon-border">
@@ -340,7 +417,7 @@ export default function Dashboard() {
                     NO ALERTS DETECTED FOR {activeCompanyObj?.name.toUpperCase() || selectedCompany.toUpperCase()}
                   </p>
                   <p className="font-mono text-xs text-gray-500">
-                    ამ კომპანიის ინფრასტრუქტურაზე (`company_id: &quot;{selectedCompany}&quot;`) საფრთხეები არ ფიქსირდება.
+                    დააჭირე ზემოთ &quot;⚡ DEPLOY AGENT&quot; ღილაკს ამ კომპანიის მოწყობილობის დასაკავშირებლად.
                   </p>
                 </div>
               ) : (

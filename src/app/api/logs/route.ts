@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
+// გასაღებს კითხულობს პირდაპირ .env.local-იდან ან AWS Amplify-ს Environment Variables-იდან
 const API_SECRET = process.env.GUARDIAN_API_KEY;
 
 export interface Company {
@@ -27,7 +28,7 @@ const DEFAULT_COMPANIES: Company[] = [
   { id: "medi-cloud", name: "MediCloud Georgia", createdAt: "2026-10-17" },
 ];
 
-// სარეზერვო მეხსიერება (თუ Amplify-ში Redis-ის ცვლადები მიუწვდომელია)
+// სარეზერვო მეხსიერება (თუ Redis დროებით მიუწვდომელია, 500 შეცდომა რომ არასდროს ამოაგდოს)
 const globalStore = globalThis as unknown as {
   __guardianCompanies?: Company[];
   __guardianLogs?: Record<string, SecurityLog[]>;
@@ -74,7 +75,6 @@ export async function GET(request: Request) {
     }
   }
 
-  // Fallback: სერვერის მეხსიერებიდან წამოღება
   return NextResponse.json({
     storage: "memory",
     companies: globalStore.__guardianCompanies || DEFAULT_COMPANIES,
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const redis = getRedisClient();
 
-    // A) ახალი ქვე-კომპანიის შექმნა Dashboard-იდან
+    // A) თუ საიტის Dashboard-იდან ახალ ქვე-კომპანიას ვამატებთ
     if (body.action === "create_company") {
       const cleanName = String(body.name || "").trim();
       const cleanId = String(body.id || "")
@@ -105,14 +105,12 @@ export async function POST(request: Request) {
         createdAt: new Date().toISOString().split("T")[0],
       };
 
-      // მეხსიერებაში შენახვა
       const memCompanies = globalStore.__guardianCompanies || [...DEFAULT_COMPANIES];
       if (!memCompanies.some((c) => c.id === cleanId)) {
         memCompanies.push(newCompany);
         globalStore.__guardianCompanies = memCompanies;
       }
 
-      // Redis-ში შენახვა (თუ ხელმისაწვდომია)
       if (redis) {
         try {
           const rCompanies = (await redis.get<Company[]>("guardian:companies")) || [...DEFAULT_COMPANIES];
@@ -129,9 +127,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ companies: memCompanies }, { status: 200 });
     }
 
-    // B) Rust აგენტიდან ლოგის მიღება
+    // B) თუ Rust აგენტი გვიგზავნის ლოგს — ვამოწმებთ .env-ში გაწერილ GUARDIAN_API_KEY-ს
     const apiKey = request.headers.get("x-api-key");
-    if (apiKey !== API_SECRET) {
+    if (!API_SECRET || apiKey !== API_SECRET) {
       return NextResponse.json({ message: "Unauthorized Guardian Node" }, { status: 401 });
     }
 
@@ -164,7 +162,7 @@ export async function POST(request: Request) {
     globalStore.__guardianLogs![companyId].unshift(logEntry);
     globalStore.__guardianLogs![companyId] = globalStore.__guardianLogs![companyId].slice(0, 200);
 
-    // 2. ვინახავთ Redis-ში (თუ ხელმისაწვდომია)
+    // 2. ვინახავთ Redis-ში
     if (redis) {
       try {
         const rCompanies = (await redis.get<Company[]>("guardian:companies")) || [...DEFAULT_COMPANIES];

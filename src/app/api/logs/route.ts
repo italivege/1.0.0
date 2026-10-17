@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
-const API_SECRET = process.env.GUARDIAN_API_KEY || "italive-secret-key-2026";
+const API_SECRET = process.env.GUARDIAN_API_KEY;
 
 export interface Company {
   id: string;

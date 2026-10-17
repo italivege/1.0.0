@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// საეჭვო მისამართები, რომლებსაც ჰაკერები და ბოტები ამოწმებენ ვებ-სერვერებზე
 const SUSPICIOUS_PATHS = [
   "/.env",
   "/.git",
@@ -15,7 +14,6 @@ const SUSPICIOUS_PATHS = [
   "/actuator",
 ];
 
-// საეჭვო სკანერები (User-Agent)
 const SUSPICIOUS_AGENTS = [
   "sqlmap",
   "nikto",
@@ -28,12 +26,38 @@ const SUSPICIOUS_AGENTS = [
   "blacksun",
 ];
 
-export function middleware(request: NextRequest) {
+// ვიზიტორის რეალური IP-ის ამოღება Cloudflare-ის და AWS CloudFront-ის ჰედერებიდან
+function getRealClientIp(request: NextRequest): string {
+  // 1. თუ ჩართულია Cloudflare Proxy
+  const cfIp = request.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+
+  // 2. თუ შემოდის პირდაპირ AWS CloudFront / Amplify-დან (ფორმატი: IP:PORT)
+  const viewerAddress = request.headers.get("cloudfront-viewer-address");
+  if (viewerAddress) {
+    // ვაშორებთ პორტს ბოლოში (მაგ: "212.58.100.1:54321" -> "212.58.100.1")
+    const lastColon = viewerAddress.lastIndexOf(":");
+    return lastColon > 0 ? viewerAddress.slice(0, lastColon).trim() : viewerAddress.trim();
+  }
+
+  // 3. სტანდარტული X-Real-IP
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
+  // 4. X-Forwarded-For (პირველი IP სიაში არის რეალური კლიენტი)
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+
+  return "unknown-ip";
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const fullUrl = `${pathname}${search}`.toLowerCase();
   const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
 
-  // არ ვამოწმებთ სტატიკურ ფაილებს და თავად ლოგების API-ს
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/logs") ||
@@ -46,13 +70,10 @@ export function middleware(request: NextRequest) {
   let detectedSignature: string | null = null;
   let severity = 2;
 
-  // 1. ვამოწმებთ ფარული ფაილების სკანირებას (.env, wp-admin და ა.შ.)
   if (SUSPICIOUS_PATHS.some((p) => fullUrl.includes(p))) {
     detectedSignature = `WEB WAF: Sensitive Path Probe (${pathname})`;
     severity = 1;
-  }
-  // 2. ვამოწმებთ SQL Injection და XSS მცდელობებს URL-ში
-  else if (
+  } else if (
     fullUrl.includes("union%20select") ||
     fullUrl.includes("union+select") ||
     fullUrl.includes("<script") ||
@@ -62,21 +83,17 @@ export function middleware(request: NextRequest) {
   ) {
     detectedSignature = `WEB WAF: Injection / XSS Attempt (${pathname})`;
     severity = 1;
-  }
-  // 3. ვამოწმებთ ჰაკერულ სკანერებს User-Agent-ში
-  else if (SUSPICIOUS_AGENTS.some((agent) => userAgent.includes(agent))) {
+  } else if (SUSPICIOUS_AGENTS.some((agent) => userAgent.includes(agent))) {
     detectedSignature = `WEB WAF: Malicious Scanner Detected (${userAgent.slice(0, 30)})`;
     severity = 2;
   }
 
-  // თუ საფრთხე დაფიქსირდა, ვაგზავნით პირდაპირ ჩვენს Dashboard-ზე!
   if (detectedSignature) {
-    const forwardedFor = request.headers.get("x-forwarded-for");
-    const attackerIp = forwardedFor ? forwardedFor.split(",")[0].trim() : "unknown-ip";
+    const attackerIp = getRealClientIp(request);
 
     const payload = {
       company_id: "italive-core",
-      hostname: "italive-web-amplify", // <-- ასე გამოჩნდება Dashboard-ზე მოწყობილობებში!
+      hostname: "italive-web-amplify",
       signature: detectedSignature,
       category: "Web Application Firewall",
       severity,
@@ -85,15 +102,19 @@ export function middleware(request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    // ვაგზავნით ფონურად, რომ საიტი არ შეყოვნდეს
-    fetch(`${request.nextUrl.origin}/api/logs`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-company-token": "ita_italivecore_default2026token",
-      },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
+    try {
+      // await აუცილებელია Amplify-ზე, რომ ფუნქცია გაგზავნამდე არ გაითიშოს
+      await fetch("https://www.italive.ge/api/logs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-company-token": "ita_italivecore_default2026token",
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("WAF Log Error:", err);
+    }
   }
 
   return NextResponse.next();

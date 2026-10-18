@@ -1,120 +1,127 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const SUSPICIOUS_PATHS = [
+const SENSITIVE_PATHS = [
   "/.env",
   "/.git",
   "/wp-admin",
   "/wp-login",
+  "/wp-content",
+  "/xmlrpc.php",
   "/phpmyadmin",
-  "/admin",
-  "/config",
-  "/backup",
+  "/pma",
+  "/admin.php",
+  "/config.php",
+  "/configuration.php",
   "/etc/passwd",
+  "/etc/shadow",
   "/actuator",
+  "/server-status",
+  "/telescope",
+  "/.aws",
+  "/.ssh",
+  "/backup.sql",
+  "/db.sql",
 ];
 
-const SUSPICIOUS_AGENTS = [
+const MALICIOUS_AGENTS = [
   "sqlmap",
   "nikto",
   "nmap",
   "masscan",
-  "zgrab",
-  "gobuster",
   "dirbuster",
-  "italive-test",
-  "blacksun",
+  "gobuster",
+  "nuclei",
+  "acunetix",
+  "nessus",
+  "openvas",
+  "wpscan",
+  "zgrab",
+  "wfuzz",
+  "ffuf",
+  "hydra",
+  "burpsuite",
 ];
 
-// ვიზიტორის რეალური IP-ის ამოღება Cloudflare-ის და AWS CloudFront-ის ჰედერებიდან
-function getRealClientIp(request: NextRequest): string {
-  // 1. თუ ჩართულია Cloudflare Proxy
-  const cfIp = request.headers.get("cf-connecting-ip");
-  if (cfIp) return cfIp.trim();
+export async function middleware(req: NextRequest) {
+  const { pathname, search } = req.nextUrl;
+  const lowerPath = pathname.toLowerCase();
+  const ua = (req.headers.get("user-agent") || "").toLowerCase();
+  const clientIp =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown-ip";
 
-  // 2. თუ შემოდის პირდაპირ AWS CloudFront / Amplify-დან (ფორმატი: IP:PORT)
-  const viewerAddress = request.headers.get("cloudfront-viewer-address");
-  if (viewerAddress) {
-    // ვაშორებთ პორტს ბოლოში (მაგ: "212.58.100.1:54321" -> "212.58.100.1")
-    const lastColon = viewerAddress.lastIndexOf(":");
-    return lastColon > 0 ? viewerAddress.slice(0, lastColon).trim() : viewerAddress.trim();
-  }
-
-  // 3. სტანდარტული X-Real-IP
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
-
-  // 4. X-Forwarded-For (პირველი IP სიაში არის რეალური კლიენტი)
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    return forwardedFor.split(",")[0].trim();
-  }
-
-  return "unknown-ip";
-}
-
-export async function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const fullUrl = `${pathname}${search}`.toLowerCase();
-  const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
-
+  // 1. ჩვენს Rust აგენტებს, შიდა სენსორს და ადმინისტრატორს თავისუფლად ვუშვებთ /api/logs-მდე
   if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/logs") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".ico")
+    pathname.startsWith("/api/logs") &&
+    (ua.includes("italiveguardian") ||
+      req.headers.get("x-italive-sensor") === "italive-waf-internal" ||
+      req.headers.get("x-admin-secret"))
   ) {
     return NextResponse.next();
   }
 
-  let detectedSignature: string | null = null;
-  let severity = 2;
+  let detectedSignature = "";
+  let category = "Active Web Application Firewall";
 
-  if (SUSPICIOUS_PATHS.some((p) => fullUrl.includes(p))) {
-    detectedSignature = `WEB WAF: Sensitive Path Probe (${pathname})`;
-    severity = 1;
-  } else if (
-    fullUrl.includes("union%20select") ||
-    fullUrl.includes("union+select") ||
-    fullUrl.includes("<script") ||
-    fullUrl.includes("%3cscript") ||
-    fullUrl.includes("../") ||
-    fullUrl.includes("or%201=1")
+  // 2. ფარულ ფაილებზე და ადმინ-პანელებზე წვდომის მცდელობა
+  if (SENSITIVE_PATHS.some((p) => lowerPath.includes(p))) {
+    detectedSignature = `WAF BLOCKED: Sensitive Path Probe (${pathname})`;
+    category = "Reconnaissance / File Exposure Attempt";
+  }
+  // 3. SQL Injection, XSS და Path Traversal მცდელობა URL-ში
+  else if (
+    search &&
+    /(union\s+select|<script|alert\(|or\s+1=1|\.\.\/|\/etc\/passwd|sleep\(\d+\)|benchmark\()/i.test(
+      decodeURIComponent(search)
+    )
   ) {
-    detectedSignature = `WEB WAF: Injection / XSS Attempt (${pathname})`;
-    severity = 1;
-  } else if (SUSPICIOUS_AGENTS.some((agent) => userAgent.includes(agent))) {
-    detectedSignature = `WEB WAF: Malicious Scanner Detected (${userAgent.slice(0, 30)})`;
-    severity = 2;
+    detectedSignature = `WAF BLOCKED: Injection/Traversal Attempt (${pathname})`;
+    category = "Web Application Attack (SQLi/XSS)";
+  }
+  // 4. ჰაკერული სკანერების ამოცნობა User-Agent-ით
+  else if (MALICIOUS_AGENTS.some((agent) => ua.includes(agent))) {
+    detectedSignature = `WAF BLOCKED: Malicious Scanner (${ua.slice(0, 40)})`;
+    category = "Automated Vulnerability Scanner";
   }
 
+  // თუ საფრთხე დაფიქსირდა: ვაგზავნით ლოგს (await-ით, რომ არ დაიკარგოს) და ვბლოკავთ 403-ით
   if (detectedSignature) {
-    const attackerIp = getRealClientIp(request);
-
-    const payload = {
-      company_id: "italive-core",
-      hostname: "italive-web-amplify",
-      signature: detectedSignature,
-      category: "Web Application Firewall",
-      severity,
-      src_ip: attackerIp,
-      dest_ip: `italive.ge${pathname}`,
-      timestamp: new Date().toISOString(),
-    };
-
     try {
-      // await აუცილებელია Amplify-ზე, რომ ფუნქცია გაგზავნამდე არ გაითიშოს
-      await fetch("https://www.italive.ge/api/logs", {
+      await fetch(`${req.nextUrl.origin}/api/logs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-italive-sensor": "italive-waf-internal",
           "x-company-token": "ita_italivecore_default2026token",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          company_id: "italive-core",
+          hostname: "italive.ge-waf",
+          signature: detectedSignature,
+          category,
+          severity: 1,
+          src_ip: clientIp,
+          dest_ip: "italive.ge",
+          timestamp: new Date().toISOString(),
+        }),
       });
-    } catch (err) {
-      console.error("WAF Log Error:", err);
+    } catch {
+      // თუ შიდა ქსელური შეფერხებაა, მაინც ვბლოკავთ შემტევს
     }
+
+    return new NextResponse(
+      JSON.stringify({
+        error: "403 Forbidden — Access Blocked by ITalive Active WAF",
+        incident: detectedSignature,
+        client_ip: clientIp,
+      }),
+      {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   return NextResponse.next();

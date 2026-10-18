@@ -1,17 +1,4 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-import crypto from "crypto";
-
-export const dynamic = "force-dynamic";
-
-const MASTER_API_SECRET = process.env.GUARDIAN_API_KEY;
-
-export interface Company {
-  id: string;
-  name: string;
-  token: string;
-  createdAt: string;
-}
 
 export interface SecurityLog {
   id: string;
@@ -25,197 +12,211 @@ export interface SecurityLog {
   timestamp: string;
 }
 
-function generateCompanyToken(companyId: string): string {
-  const randomHex = crypto.randomBytes(12).toString("hex");
-  return `ita_${companyId.replace(/[^a-z0-9]/g, "")}_${randomHex}`;
+export interface CompanyTenant {
+  id: string;
+  name: string;
+  token: string;
+  createdAt: string;
 }
 
-const DEFAULT_COMPANIES: Company[] = [
-  {
-    id: "italive-core",
-    name: "ITalive Core Infrastructure",
-    token: "ita_italivecore_default2026token",
-    createdAt: "2026-10-17",
-  },
-  {
-    id: "alpha-bank",
-    name: "Alpha Financial Group",
-    token: "ita_alphabank_9f8e7d6c5b4a3210",
-    createdAt: "2026-10-17",
-  },
-  {
-    id: "medi-cloud",
-    name: "MediCloud Georgia",
-    token: "ita_medicloud_1a2b3c4d5e6f7890",
-    createdAt: "2026-10-17",
-  },
-];
+const ADMIN_SECRET = process.env.ITALIVE_ADMIN_SECRET || "itadesk2026admin";
 
-function getRedisClient(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  try {
-    return new Redis({ url, token });
-  } catch {
-    return null;
+const globalStore = globalThis as unknown as {
+  italiveLogs: SecurityLog[];
+  italiveCompanies: CompanyTenant[];
+};
+
+if (!globalStore.italiveCompanies) {
+  globalStore.italiveCompanies = [
+    {
+      id: "italive-core",
+      name: "ITalive Core Infrastructure",
+      token: "ita_italivecore_default2026token",
+      createdAt: new Date().toISOString(),
+    },
+  ];
+}
+
+if (!globalStore.italiveLogs) {
+  globalStore.italiveLogs = [];
+}
+
+function isAuthorizedAdmin(request: Request): boolean {
+  const adminHeader = request.headers.get("x-admin-secret");
+  return Boolean(adminHeader && adminHeader === ADMIN_SECRET);
+}
+
+// GET /api/logs — ხელმისაწვდომია მხოლოდ ავტორიზებული Dashboard-იდან
+export async function GET(request: Request) {
+  if (!isAuthorizedAdmin(request)) {
+    return NextResponse.json(
+      {
+        error:
+          "403 Forbidden — Direct access to ITalive Telemetry API is strictly prohibited.",
+      },
+      { status: 403 }
+    );
   }
-}
 
-async function getCompaniesList(redis: Redis | null): Promise<Company[]> {
-  if (!redis) return DEFAULT_COMPANIES;
-  let companies = await redis.get<Company[]>("guardian:companies");
-  if (!companies || companies.length === 0) {
-    companies = DEFAULT_COMPANIES;
-    await redis.set("guardian:companies", companies);
-  } else {
-    // თუ ძველ კომპანიებს ტოკენი არ ჰქონდათ, ავტომატურად მივანიჭოთ
-    let updated = false;
-    companies = companies.map((c) => {
-      if (!c.token) {
-        updated = true;
-        const def = DEFAULT_COMPANIES.find((d) => d.id === c.id);
-        return { ...c, token: def ? def.token : generateCompanyToken(c.id) };
-      }
-      return c;
-    });
-    if (updated) {
-      await redis.set("guardian:companies", companies);
-    }
-  }
-  return companies;
-}
+  const { searchParams } = new URL(request.url);
+  const companyId = searchParams.get("company_id");
 
-function isDuplicateLog(existingLogs: SecurityLog[], candidate: SecurityLog): boolean {
-  return existingLogs.some(
-    (log) =>
-      log.company_id === candidate.company_id &&
-      log.hostname === candidate.hostname &&
-      log.signature === candidate.signature &&
-      log.src_ip === candidate.src_ip &&
-      log.dest_ip === candidate.dest_ip
+  const filteredLogs = companyId
+    ? globalStore.italiveLogs.filter((l) => l.company_id === companyId)
+    : globalStore.italiveLogs;
+
+  return NextResponse.json(
+    {
+      logs: filteredLogs,
+      companies: globalStore.italiveCompanies,
+    },
+    { status: 200 }
   );
 }
 
-function deduplicateLogs(logs: SecurityLog[], companyId: string): SecurityLog[] {
-  const seen = new Set<string>();
-  const result: SecurityLog[] = [];
-  for (const log of logs) {
-    if (log.company_id !== companyId) continue;
-    const key = `${log.hostname}|${log.signature}|${log.src_ip}|${log.dest_ip}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      result.push(log);
-    }
-  }
-  return result;
-}
-
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const companyId = searchParams.get("company_id") || "italive-core";
-  const redis = getRedisClient();
-
-  if (redis) {
-    try {
-      const companies = await getCompaniesList(redis);
-      const rawLogs = await redis.lrange<SecurityLog>(`guardian:logs:${companyId}`, 0, 199);
-      return NextResponse.json({
-        storage: "redis",
-        companies,
-        logs: deduplicateLogs(rawLogs || [], companyId),
-      });
-    } catch (err) {
-      console.error("Redis GET error:", err);
-    }
-  }
-
-  return NextResponse.json({
-    storage: "memory",
-    companies: DEFAULT_COMPANIES,
-    logs: [],
-  });
-}
-
+// POST /api/logs — იღებს ლოგებს მხოლოდ Rust აგენტიდან ან შიდა WAF სენსორიდან
 export async function POST(request: Request) {
   try {
+    const userAgent = request.headers.get("user-agent") || "";
+    const internalSensor = request.headers.get("x-italive-sensor") || "";
+    const companyToken = request.headers.get("x-company-token") || "";
+
+    const isTrustedSource =
+      userAgent.includes("ITaliveGuardian") ||
+      internalSensor === "italive-waf-internal";
+
+    if (!isTrustedSource) {
+      return NextResponse.json(
+        { error: "403 Forbidden — Untrusted Client Signature" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
-    const redis = getRedisClient();
-    const companies = await getCompaniesList(redis);
+    const companyId = body.company_id || "italive-core";
 
-    // A) ახალი ქვე-კომპანიის შექმნა უნიკალური ტოკენით
-    if (body.action === "create_company") {
-      const cleanName = String(body.name || "").trim();
-      const cleanId = String(body.id || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9-_]/g, "-")
-        .trim();
-
-      if (!cleanName || !cleanId) {
-        return NextResponse.json({ message: "შეავსეთ კომპანიის სახელი და ID" }, { status: 400 });
-      }
-
-      if (!companies.some((c) => c.id === cleanId)) {
-        const newCompany: Company = {
-          id: cleanId,
-          name: cleanName,
-          token: generateCompanyToken(cleanId),
-          createdAt: new Date().toISOString().split("T")[0],
-        };
-        companies.push(newCompany);
-        if (redis) {
-          await redis.set("guardian:companies", companies);
-        }
-      }
-
-      return NextResponse.json({ companies }, { status: 200 });
+    const company = globalStore.italiveCompanies.find(
+      (c) => c.id === companyId
+    );
+    if (!company || company.token !== companyToken) {
+      return NextResponse.json(
+        { error: "403 Forbidden — Invalid Company ID or Token" },
+        { status: 403 }
+      );
     }
 
-    // B) ლოგის მიღება აგენტიდან (ვამოწმებთ კომპანიის ინდივიდუალურ ტოკენს ან Master გასაღებს)
-    const companyId = String(body.company_id || "italive-core").trim();
-    const companyToken = request.headers.get("x-company-token");
-    const legacyApiKey = request.headers.get("x-api-key");
-
-    const targetCompany = companies.find((c) => c.id === companyId);
-    if (!targetCompany) {
-      return NextResponse.json({ message: "Unknown Company ID" }, { status: 404 });
-    }
-
-    const isTokenValid =
-      (companyToken && companyToken === targetCompany.token) ||
-      (MASTER_API_SECRET && legacyApiKey === MASTER_API_SECRET);
-
-    if (!isTokenValid) {
-      return NextResponse.json({ message: "Invalid Company Token" }, { status: 401 });
-    }
-
-    const logEntry: SecurityLog = {
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      company_id: companyId,
-      hostname: String(body.hostname || "unknown-host"),
-      signature: String(body.signature || "Unknown Alert"),
-      category: String(body.category || "Network Traffic"),
-      severity: Number(body.severity) || 3,
-      src_ip: String(body.src_ip || "0.0.0.0"),
-      dest_ip: String(body.dest_ip || "0.0.0.0"),
-      timestamp: String(body.timestamp || new Date().toISOString()),
+    const nowIso = new Date().toISOString();
+    const newLog: SecurityLog = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+      company_id: company.id,
+      hostname: body.hostname || "unknown-host",
+      signature: body.signature || "Unknown Security Event",
+      category: body.category || "Security",
+      severity: Number(body.severity) || 2,
+      src_ip: body.src_ip || "0.0.0.0",
+      dest_ip: body.dest_ip || "0.0.0.0",
+      timestamp: body.timestamp && body.timestamp.trim() !== "" ? body.timestamp : nowIso,
     };
 
-    if (redis) {
-      const redisKey = `guardian:logs:${companyId}`;
-      const existingRedisLogs = (await redis.lrange<SecurityLog>(redisKey, 0, 199)) || [];
+    // დუბლიკატად ითვლება მხოლოდ მაშინ, თუ იგივე შეტევა ბოლო 15 წამში უკვე შემოვიდა
+    const isOnlineHeartbeat = newLog.signature.includes("AGENT ONLINE");
+    const nowMs = Date.now();
 
-      if (isDuplicateLog(existingRedisLogs, logEntry)) {
-        return NextResponse.json({ status: "duplicate_ignored" }, { status: 200 });
+    const isRecentDuplicate =
+      !isOnlineHeartbeat &&
+      globalStore.italiveLogs.slice(0, 30).some((existing) => {
+        const existingMs = new Date(existing.timestamp).getTime() || 0;
+        const within15Seconds = Math.abs(nowMs - existingMs) < 15000;
+        return (
+          within15Seconds &&
+          existing.company_id === newLog.company_id &&
+          existing.hostname === newLog.hostname &&
+          existing.signature === newLog.signature &&
+          existing.src_ip === newLog.src_ip &&
+          existing.dest_ip === newLog.dest_ip
+        );
+      });
+
+    if (!isRecentDuplicate) {
+      globalStore.italiveLogs.unshift(newLog);
+      if (globalStore.italiveLogs.length > 500) {
+        globalStore.italiveLogs = globalStore.italiveLogs.slice(0, 500);
       }
-
-      await redis.lpush(redisKey, logEntry);
-      await redis.ltrim(redisKey, 0, 199);
     }
 
-    return NextResponse.json({ status: "logged", id: logEntry.id }, { status: 200 });
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ message: "Server error", error: errMsg }, { status: 500 });
+    return NextResponse.json(
+      { status: "logged", id: newLog.id },
+      { status: 200 }
+    );
+  } catch {
+    return NextResponse.json({ error: "Invalid Payload" }, { status: 400 });
   }
+}
+
+// PUT /api/logs — ახალი კომპანიის (Tenant) დამატება მხოლოდ ადმინისტრატორისთვის
+export async function PUT(request: Request) {
+  if (!isAuthorizedAdmin(request)) {
+    return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
+  }
+
+  try {
+    const { name, id } = await request.json();
+    if (!name || !id) {
+      return NextResponse.json(
+        { error: "Name and ID required" },
+        { status: 400 }
+      );
+    }
+
+    const cleanId = id
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-");
+
+    const exists = globalStore.italiveCompanies.some((c) => c.id === cleanId);
+    if (exists) {
+      return NextResponse.json(
+        { error: "Company ID already exists" },
+        { status: 409 }
+      );
+    }
+
+    const randomPart =
+      Math.random().toString(36).substring(2, 10) +
+      Math.random().toString(36).substring(2, 10);
+    const newCompany: CompanyTenant = {
+      id: cleanId,
+      name: name.trim(),
+      token: `ita_${cleanId.replace(/-/g, "")}_${randomPart}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    globalStore.italiveCompanies.push(newCompany);
+    return NextResponse.json({ company: newCompany }, { status: 201 });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to create company" },
+      { status: 400 }
+    );
+  }
+}
+
+// DELETE /api/logs — ლოგების გასუფთავება მხოლოდ ადმინისტრატორისთვის
+export async function DELETE(request: Request) {
+  if (!isAuthorizedAdmin(request)) {
+    return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const companyId = searchParams.get("company_id");
+
+  if (companyId) {
+    globalStore.italiveLogs = globalStore.italiveLogs.filter(
+      (l) => l.company_id !== companyId
+    );
+  } else {
+    globalStore.italiveLogs = [];
+  }
+
+  return NextResponse.json({ status: "cleared" }, { status: 200 });
 }

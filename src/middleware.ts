@@ -121,7 +121,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|italive-guardian|itadesk-windows.exe).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:bin|exe|svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

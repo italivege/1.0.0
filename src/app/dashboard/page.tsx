@@ -117,9 +117,10 @@ export default function Dashboard() {
 
   // 1-ხაზიანი საინსტალაციო ბრძანება კონკრეტული კომპანიისა და მოწყობილობისთვის
 // სრული 1-ხაზიანი ავტო-ინსტალატორი ნებისმიერი ახალი Ubuntu სერვერისთვის
-  const deployCommand = `sudo apt update && sudo apt install -y suricata curl && \\
+const deployCommand = `sudo apt update && sudo apt install -y suricata curl && \\
 sudo suricata-update && sudo systemctl restart suricata && \\
-sudo curl -sL https://www.italive.ge/italive-guardian -o /usr/local/bin/italive-guardian && \\
+sudo systemctl stop italive-guardian 2>/dev/null || true && \\
+sudo curl -fL https://www.italive.ge/italive-guardian.bin -o /usr/local/bin/italive-guardian && \\
 sudo chmod +x /usr/local/bin/italive-guardian && \\
 sudo mkdir -p /etc/italive && cat << 'EOF' | sudo tee /etc/italive/guardian.conf > /dev/null
 COMPANY_ID="${selectedCompany}"
@@ -144,7 +145,7 @@ RestartSec=3
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo systemctl daemon-reload && sudo systemctl enable --now italive-guardian && sudo systemctl restart italive-guardian`;
+sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/dev/null || true && sudo systemctl enable --now italive-guardian && sudo systemctl restart italive-guardian && sudo systemctl status italive-guardian --no-pager`;
 
   const copyCommand = () => {
     navigator.clipboard.writeText(deployCommand);

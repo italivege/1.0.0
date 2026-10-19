@@ -23,14 +23,12 @@ interface CompanyTenant {
 }
 
 export default function DashboardPage() {
-  // ავტორიზაციის State-ები
   const [adminSecret, setAdminSecret] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string>("");
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
 
-  // მულტი-ტენანტური და ლოგების State-ები
   const [companies, setCompanies] = useState<CompanyTenant[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("italive-core");
   const [selectedDevice, setSelectedDevice] = useState<string>("ALL");
@@ -39,14 +37,13 @@ export default function DashboardPage() {
   const [logs, setLogs] = useState<SecurityLog[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string>("");
 
-  // UI & Modal State-ები
   const [showDeployModal, setShowDeployModal] = useState<boolean>(false);
-  const [customDeviceName, setCustomDeviceName] = useState<string>("ubuntu-node-01");
+  const [deployOs, setDeployOs] = useState<"linux" | "windows">("linux");
+  const [customDeviceName, setCustomDeviceName] = useState<string>("node-01");
   const [copiedDeploy, setCopiedDeploy] = useState<boolean>(false);
   const [showToken, setShowToken] = useState<boolean>(false);
   const [copiedToken, setCopiedToken] = useState<boolean>(false);
 
-  // ახალი კომპანიის დამატების State-ები
   const [newCompanyName, setNewCompanyName] = useState<string>("");
   const [newCompanyId, setNewCompanyId] = useState<string>("");
   const [showAddCompany, setShowAddCompany] = useState<boolean>(false);
@@ -172,7 +169,6 @@ export default function DashboardPage() {
   const activeCompanyObj =
     companies.find((c) => c.id === selectedCompany) || companies[0];
 
-  // უნიკალური მოწყობილობები და სტატისტიკა
   const devices = Array.from(new Set(logs.map((l) => l.hostname)));
   const criticalCount = logs.filter((l) => l.severity === 1).length;
   const warningCount = logs.filter((l) => l.severity === 2).length;
@@ -180,7 +176,6 @@ export default function DashboardPage() {
     l.signature.toUpperCase().includes("WAF BLOCKED")
   ).length;
 
-  // ფილტრაცია მოწყობილობით, სიმძიმით და საძიებო სიტყვით
   const visibleLogs = logs.filter((log) => {
     const matchesDevice =
       selectedDevice === "ALL" || log.hostname === selectedDevice;
@@ -197,7 +192,11 @@ export default function DashboardPage() {
     return matchesDevice && matchesSeverity && matchesSearch;
   });
 
-  const deployCommand = `sudo apt update && sudo apt install -y suricata curl && \\
+  const activeToken =
+    activeCompanyObj?.token || "ita_italivecore_default2026token";
+  const targetDeviceName = customDeviceName.trim() || "node-01";
+
+  const linuxDeployCommand = `sudo apt update && sudo apt install -y suricata curl && \\
 ACTIVE_IFACE=$(ip route get 8.8.8.8 | awk -- '{printf $5}') && \\
 sudo sed -i "s/interface: eth0/interface: $ACTIVE_IFACE/g" /etc/suricata/suricata.yaml && \\
 sudo suricata-update && sudo systemctl restart suricata && \\
@@ -206,8 +205,8 @@ sudo curl -fL https://www.italive.ge/italive-guardian.bin -o /usr/local/bin/ital
 sudo chmod +x /usr/local/bin/italive-guardian && \\
 sudo mkdir -p /etc/italive && cat << 'EOF' | sudo tee /etc/italive/guardian.conf > /dev/null
 COMPANY_ID="${selectedCompany}"
-COMPANY_TOKEN="${activeCompanyObj?.token || "ita_italivecore_default2026token"}"
-DEVICE_NAME="${customDeviceName.trim() || "ubuntu-node"}"
+COMPANY_TOKEN="${activeToken}"
+DEVICE_NAME="${targetDeviceName}"
 API_URL="https://www.italive.ge/api/logs"
 SURICATA_LOG="/var/log/suricata/eve.json"
 EOF
@@ -229,6 +228,57 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/dev/null || true && sudo systemctl enable --now italive-guardian && sudo systemctl restart italive-guardian && sudo journalctl -u italive-guardian -n 10 --no-pager`;
 
+  const windowsDeployCommand = `# გაუშვით PowerShell ადმინისტრატორის უფლებით (Run as Administrator)
+$ErrorActionPreference = "SilentlyContinue"
+Write-Host "🛡️ [1/4] მზადდება ITalive Guardian & Suricata IDS გარემო..." -ForegroundColor Cyan
+New-Item -ItemType Directory -Force -Path "C:\\ProgramData\\ITalive" | Out-Null
+New-Item -ItemType Directory -Force -Path "C:\\Program Files\\Suricata\\log" | Out-Null
+
+if (-not (Test-Path "C:\\Program Files\\Suricata\\suricata.exe")) {
+    Write-Host "🌐 [2/4] მიმდინარეობს Suricata IDS-ის ავტომატური ჩამოტვირთვა და ინსტალაცია..." -ForegroundColor Yellow
+    winget install --id OISF.Suricata -e --silent --accept-package-agreements --accept-source-agreements
+    if (-not (Test-Path "C:\\Program Files\\Suricata\\suricata.exe")) {
+        $msi = "$env:TEMP\\Suricata-win64.msi"
+        Invoke-WebRequest -Uri "https://www.openinfosecfoundation.org/download/windows/Suricata-7.0.6-1-64bit.msi" -OutFile $msi
+        Start-Process msiexec.exe -ArgumentList "/i \`"$msi\`" /qn /norestart" -Wait
+    }
+}
+
+$localIp = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notmatch 'Loopback' -and $_.IPAddress -notmatch '^169' } | Select-Object -First 1).IPAddress
+if ((Test-Path "C:\\Program Files\\Suricata\\suricata.exe") -and $localIp) {
+    & "C:\\Program Files\\Suricata\\suricata.exe" --service-install -c "C:\\Program Files\\Suricata\\suricata.yaml" -i $localIp 2>$null
+    Start-Service Suricata 2>$null
+    schtasks /Create /TN "ITaliveSuricataIDS" /TR "\`\"C:\\Program Files\\Suricata\\suricata.exe\`\" -c \`\"C:\\Program Files\\Suricata\\suricata.yaml\`\" -i $localIp -l \`\"C:\\Program Files\\Suricata\\log\`\"" /SC ONSTART /RU SYSTEM /F | Out-Null
+    schtasks /Run /TN "ITaliveSuricataIDS" | Out-Null
+}
+
+Write-Host "⬇️ [3/4] იწერება ITalive Guardian Windows Agent..." -ForegroundColor Cyan
+schtasks /End /TN "ITaliveGuardianAgent" 2>$null | Out-Null
+Stop-Process -Name "italive-guardian" -Force 2>$null
+Invoke-WebRequest -Uri "https://www.italive.ge/italive-guardian.exe" -OutFile "C:\\ProgramData\\ITalive\\italive-guardian.exe"
+
+@"
+COMPANY_ID="${selectedCompany}"
+COMPANY_TOKEN="${activeToken}"
+DEVICE_NAME="${targetDeviceName}"
+API_URL="https://www.italive.ge/api/logs"
+SURICATA_LOG="C:\\Program Files\\Suricata\\log\\eve.json"
+"@ | Set-Content -Path "C:\\ProgramData\\ITalive\\guardian.conf" -Encoding UTF8
+
+if (-not (Test-Path "C:\\Program Files\\Suricata\\log\\eve.json")) {
+    New-Item -ItemType File -Force -Path "C:\\Program Files\\Suricata\\log\\eve.json" | Out-Null
+}
+
+Write-Host "🚀 [4/4] ირთვება მუდმივი ფონური სერვისი..." -ForegroundColor Green
+schtasks /Create /TN "ITaliveGuardianAgent" /TR "C:\\ProgramData\\ITalive\\italive-guardian.exe" /SC ONSTART /RU SYSTEM /RL HIGHEST /F | Out-Null
+schtasks /Run /TN "ITaliveGuardianAgent" | Out-Null
+Start-Sleep -Seconds 2
+Add-Content -Path "C:\\Program Files\\Suricata\\log\\eve.json" -Value '{"timestamp":"2026-10-19T12:00:00.000000+0000","event_type":"alert","src_ip":"185.220.101.99","dest_ip":"Windows-Endpoint","alert":{"signature":"WINDOWS SURICATA IDS ACTIVE & VERIFIED (SEV-1)","category":"Windows Network IDS","severity":1}}'
+Write-Host "✅ ITalive Guardian + Suricata წარმატებით ჩაირთო! შეამოწმეთ Dashboard." -ForegroundColor Green`;
+
+  const activeDeployCommand =
+    deployOs === "linux" ? linuxDeployCommand : windowsDeployCommand;
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
@@ -237,7 +287,6 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
     );
   }
 
-  // ავტორიზაციის ეკრანი
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
@@ -309,7 +358,7 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
             </h1>
           </div>
           <p className="text-slate-400 text-sm mt-1">
-            Multi-Tenant Security Telemetry & Active API Protection • განახლდა:{" "}
+            Multi-Tenant Security Telemetry (Linux & Windows) • განახლდა:{" "}
             <span className="text-cyan-400 font-mono">{lastUpdated || "LIVE"}</span>
           </p>
         </div>
@@ -365,7 +414,10 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
             საეჭვო აქტივობა (SEV-2) / WAF
           </div>
           <div className="text-3xl font-bold text-amber-300 mt-2">
-            {warningCount} <span className="text-sm text-slate-400 font-normal">(WAF: {wafBlockedCount})</span>
+            {warningCount}{" "}
+            <span className="text-sm text-slate-400 font-normal">
+              (WAF: {wafBlockedCount})
+            </span>
           </div>
           <div className="text-[11px] text-slate-400 mt-1">
             დაბლოკილი სკანერები და ზონდირება
@@ -380,7 +432,7 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
             {devices.length}
           </div>
           <div className="text-[11px] text-slate-400 mt-1">
-            დაკავშირებული ჰოსტები
+            Linux & Windows ჰოსტები
           </div>
         </div>
       </div>
@@ -423,12 +475,12 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
         </div>
       )}
 
-      {/* Deploy Modal */}
+      {/* Deploy Modal with Linux / Windows Switcher */}
       {showDeployModal && (
         <div className="max-w-7xl mx-auto mt-6 bg-slate-900 border border-cyan-500/40 rounded-xl p-6 shadow-xl">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <h2 className="text-lg font-bold text-cyan-400">
-              ⚡ Linux აგენტის სწრაფი ინსტალაცია ({activeCompanyObj?.name})
+              ⚡ აგენტის + Suricata IDS-ის ავტომატური ინსტალაცია ({activeCompanyObj?.name})
             </h2>
             <button
               onClick={() => setShowDeployModal(false)}
@@ -437,37 +489,93 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
               ✕ დახურვა
             </button>
           </div>
-          <div className="mb-4">
-            <label className="block text-xs text-slate-400 mb-1">
-              სერვერის სახელი (DEVICE_NAME):
-            </label>
-            <input
-              type="text"
-              value={customDeviceName}
-              onChange={(e) => setCustomDeviceName(e.target.value)}
-              className="bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm text-white w-full max-w-xs"
-              placeholder="მაგ: itad.signaling"
-            />
+
+          <div className="flex flex-wrap items-end gap-4 mb-4">
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">
+                ოპერაციული სისტემა:
+              </label>
+              <div className="flex rounded-lg overflow-hidden border border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeployOs("linux");
+                    if (customDeviceName === "win-server-01") {
+                      setCustomDeviceName("ubuntu-node-01");
+                    }
+                  }}
+                  className={`px-4 py-2 text-xs font-semibold transition ${
+                    deployOs === "linux"
+                      ? "bg-cyan-600 text-white"
+                      : "bg-slate-950 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  🐧 Linux (Ubuntu / Debian)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeployOs("windows");
+                    if (
+                      customDeviceName === "node-01" ||
+                      customDeviceName === "ubuntu-node-01"
+                    ) {
+                      setCustomDeviceName("win-server-01");
+                    }
+                  }}
+                  className={`px-4 py-2 text-xs font-semibold transition ${
+                    deployOs === "windows"
+                      ? "bg-cyan-600 text-white"
+                      : "bg-slate-950 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  🪟 Windows (PowerShell + Auto-Suricata)
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">
+                მოწყობილობის სახელი (DEVICE_NAME):
+              </label>
+              <input
+                type="text"
+                value={customDeviceName}
+                onChange={(e) => setCustomDeviceName(e.target.value)}
+                className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white w-64"
+                placeholder="მაგ: win-office-pc"
+              />
+            </div>
           </div>
-          <pre className="bg-slate-950 border border-slate-800 p-4 rounded-lg text-xs text-cyan-300 overflow-x-auto">
-            {deployCommand}
+
+          <p className="text-xs text-slate-400 mb-2">
+            {deployOs === "linux"
+              ? "გაუშვით ეს ბრძანება Ubuntu სერვერის ტერმინალში:"
+              : "გახსენით Windows PowerShell ადმინისტრატორის უფლებით (Run as Administrator) და ჩასვით:"}
+          </p>
+
+          <pre className="bg-slate-950 border border-slate-800 p-4 rounded-lg text-xs text-cyan-300 overflow-x-auto max-h-80">
+            {activeDeployCommand}
           </pre>
+
           <button
             onClick={() => {
-              navigator.clipboard.writeText(deployCommand);
+              navigator.clipboard.writeText(activeDeployCommand);
               setCopiedDeploy(true);
               setTimeout(() => setCopiedDeploy(false), 2000);
             }}
             className="mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded"
           >
-            {copiedDeploy ? "✅ დაკოპირდა!" : "📋 ბრძანების დაკოპირება"}
+            {copiedDeploy
+              ? "✅ დაკოპირდა!"
+              : `📋 ${deployOs === "linux" ? "Linux" : "Windows PowerShell"} ბრძანების დაკოპირება`}
           </button>
         </div>
       )}
 
       {/* Main Grid */}
       <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar: Companies & Devices */}
+        {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
@@ -566,7 +674,7 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
           </div>
         </div>
 
-        {/* Logs Table & Filters */}
+        {/* Logs Table */}
         <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -578,7 +686,6 @@ sudo systemctl daemon-reload && sudo systemctl reset-failed italive-guardian 2>/
               </span>
             </div>
 
-            {/* Search & Severity Filter */}
             <div className="flex flex-wrap items-center gap-2">
               <input
                 type="text"

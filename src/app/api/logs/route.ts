@@ -20,25 +20,89 @@ export interface CompanyTenant {
 }
 
 const ADMIN_SECRET = process.env.ITALIVE_ADMIN_SECRET || "itadesk2026admin";
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || "";
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || "";
+const MAX_LOGS_LIMIT = 500; // მეხსიერების ავტომატური ლიმიტი
 
+const DEFAULT_COMPANY: CompanyTenant = {
+  id: "italive-core",
+  name: "ITalive Core Infrastructure",
+  token: "ita_italivecore_default2026token",
+  createdAt: "2026-10-18T00:00:00.000Z",
+};
+
+// Fallback მეხსიერება (თუ Redis ჯერ არ არის მიბმული)
 const globalStore = globalThis as unknown as {
   italiveLogs: SecurityLog[];
   italiveCompanies: CompanyTenant[];
 };
 
 if (!globalStore.italiveCompanies) {
-  globalStore.italiveCompanies = [
-    {
-      id: "italive-core",
-      name: "ITalive Core Infrastructure",
-      token: "ita_italivecore_default2026token",
-      createdAt: new Date().toISOString(),
-    },
-  ];
+  globalStore.italiveCompanies = [DEFAULT_COMPANY];
 }
-
 if (!globalStore.italiveLogs) {
   globalStore.italiveLogs = [];
+}
+
+// Upstash Redis REST API დამხმარე ფუნქცია
+async function redisCmd(command: (string | number)[]) {
+  if (!REDIS_URL || !REDIS_TOKEN) return null;
+  try {
+    const res = await fetch(REDIS_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${REDIS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(command),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.result;
+  } catch {
+    return null;
+  }
+}
+
+async function getCompanies(): Promise<CompanyTenant[]> {
+  if (REDIS_URL && REDIS_TOKEN) {
+    const raw = await redisCmd(["GET", "italive:companies"]);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as CompanyTenant[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    await redisCmd(["SET", "italive:companies", JSON.stringify([DEFAULT_COMPANY])]);
+    return [DEFAULT_COMPANY];
+  }
+  return globalStore.italiveCompanies;
+}
+
+async function saveCompanies(companies: CompanyTenant[]) {
+  globalStore.italiveCompanies = companies;
+  if (REDIS_URL && REDIS_TOKEN) {
+    await redisCmd(["SET", "italive:companies", JSON.stringify(companies)]);
+  }
+}
+
+async function getLogs(): Promise<SecurityLog[]> {
+  if (REDIS_URL && REDIS_TOKEN) {
+    const rawList = await redisCmd(["LRANGE", "italive:logs", 0, MAX_LOGS_LIMIT - 1]);
+    if (Array.isArray(rawList)) {
+      return rawList
+        .map((item) => {
+          try {
+            return JSON.parse(item) as SecurityLog;
+          } catch {
+            return null;
+          }
+        })
+        .filter((item): item is SecurityLog => item !== null);
+    }
+  }
+  return globalStore.italiveLogs;
 }
 
 function isAuthorizedAdmin(request: Request): boolean {
@@ -46,7 +110,7 @@ function isAuthorizedAdmin(request: Request): boolean {
   return Boolean(adminHeader && adminHeader === ADMIN_SECRET);
 }
 
-// GET /api/logs — ხელმისაწვდომია მხოლოდ ავტორიზებული Dashboard-იდან
+// GET /api/logs — კითხულობს მუდმივი ბაზიდან მხოლოდ ადმინისტრატორისთვის
 export async function GET(request: Request) {
   if (!isAuthorizedAdmin(request)) {
     return NextResponse.json(
@@ -61,20 +125,23 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const companyId = searchParams.get("company_id");
 
+  const [allLogs, companies] = await Promise.all([getLogs(), getCompanies()]);
+
   const filteredLogs = companyId
-    ? globalStore.italiveLogs.filter((l) => l.company_id === companyId)
-    : globalStore.italiveLogs;
+    ? allLogs.filter((l) => l.company_id === companyId)
+    : allLogs;
 
   return NextResponse.json(
     {
       logs: filteredLogs,
-      companies: globalStore.italiveCompanies,
+      companies,
+      persistent: Boolean(REDIS_URL && REDIS_TOKEN),
     },
     { status: 200 }
   );
 }
 
-// POST /api/logs — იღებს ლოგებს მხოლოდ Rust აგენტიდან ან შიდა WAF სენსორიდან
+// POST /api/logs — ინახავს ახალ ლოგს მუდმივ ბაზაში და ავტომატურად ჭრის 500-ზე მეტ ძველ ჩანაწერს
 export async function POST(request: Request) {
   try {
     const userAgent = request.headers.get("user-agent") || "";
@@ -95,9 +162,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const companyId = body.company_id || "italive-core";
 
-    const company = globalStore.italiveCompanies.find(
-      (c) => c.id === companyId
-    );
+    const companies = await getCompanies();
+    const company = companies.find((c) => c.id === companyId);
+
     if (!company || company.token !== companyToken) {
       return NextResponse.json(
         { error: "403 Forbidden — Invalid Company ID or Token" },
@@ -115,16 +182,18 @@ export async function POST(request: Request) {
       severity: Number(body.severity) || 2,
       src_ip: body.src_ip || "0.0.0.0",
       dest_ip: body.dest_ip || "0.0.0.0",
-      timestamp: body.timestamp && body.timestamp.trim() !== "" ? body.timestamp : nowIso,
+      timestamp:
+        body.timestamp && body.timestamp.trim() !== "" ? body.timestamp : nowIso,
     };
 
-    // დუბლიკატად ითვლება მხოლოდ მაშინ, თუ იგივე შეტევა ბოლო 15 წამში უკვე შემოვიდა
+    const recentLogs = await getLogs();
     const isOnlineHeartbeat = newLog.signature.includes("AGENT ONLINE");
     const nowMs = Date.now();
 
+    // 15-წამიანი დუბლიკატების ფილტრი
     const isRecentDuplicate =
       !isOnlineHeartbeat &&
-      globalStore.italiveLogs.slice(0, 30).some((existing) => {
+      recentLogs.slice(0, 25).some((existing) => {
         const existingMs = new Date(existing.timestamp).getTime() || 0;
         const within15Seconds = Math.abs(nowMs - existingMs) < 15000;
         return (
@@ -138,9 +207,15 @@ export async function POST(request: Request) {
       });
 
     if (!isRecentDuplicate) {
-      globalStore.italiveLogs.unshift(newLog);
-      if (globalStore.italiveLogs.length > 500) {
-        globalStore.italiveLogs = globalStore.italiveLogs.slice(0, 500);
+      if (REDIS_URL && REDIS_TOKEN) {
+        // ვამატებთ სიის თავში და ვტოვებთ მხოლოდ ბოლო 500 ჩანაწერს (მეხსიერება რომ არ გადაივსოს)
+        await redisCmd(["LPUSH", "italive:logs", JSON.stringify(newLog)]);
+        await redisCmd(["LTRIM", "italive:logs", 0, MAX_LOGS_LIMIT - 1]);
+      } else {
+        globalStore.italiveLogs.unshift(newLog);
+        if (globalStore.italiveLogs.length > MAX_LOGS_LIMIT) {
+          globalStore.italiveLogs = globalStore.italiveLogs.slice(0, MAX_LOGS_LIMIT);
+        }
       }
     }
 
@@ -153,7 +228,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT /api/logs — ახალი კომპანიის (Tenant) დამატება მხოლოდ ადმინისტრატორისთვის
+// PUT /api/logs — ახალი კომპანიის დამატება მუდმივ ბაზაში
 export async function PUT(request: Request) {
   if (!isAuthorizedAdmin(request)) {
     return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
@@ -173,8 +248,8 @@ export async function PUT(request: Request) {
       .replace(/[^a-z0-9-]/g, "-")
       .replace(/-+/g, "-");
 
-    const exists = globalStore.italiveCompanies.some((c) => c.id === cleanId);
-    if (exists) {
+    const companies = await getCompanies();
+    if (companies.some((c) => c.id === cleanId)) {
       return NextResponse.json(
         { error: "Company ID already exists" },
         { status: 409 }
@@ -191,7 +266,9 @@ export async function PUT(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    globalStore.italiveCompanies.push(newCompany);
+    const updated = [...companies, newCompany];
+    await saveCompanies(updated);
+
     return NextResponse.json({ company: newCompany }, { status: 201 });
   } catch {
     return NextResponse.json(
@@ -201,7 +278,7 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE /api/logs — ლოგების გასუფთავება მხოლოდ ადმინისტრატორისთვის
+// DELETE /api/logs — Dashboard-იდან "🗑️ გასუფთავება" ღილაკზე დაჭერისას შლის ლოგებს ბაზიდან
 export async function DELETE(request: Request) {
   if (!isAuthorizedAdmin(request)) {
     return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
@@ -209,6 +286,19 @@ export async function DELETE(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const companyId = searchParams.get("company_id");
+
+  if (REDIS_URL && REDIS_TOKEN) {
+    if (companyId) {
+      const allLogs = await getLogs();
+      const remaining = allLogs.filter((l) => l.company_id !== companyId);
+      await redisCmd(["DEL", "italive:logs"]);
+      for (let i = remaining.length - 1; i >= 0; i--) {
+        await redisCmd(["LPUSH", "italive:logs", JSON.stringify(remaining[i])]);
+      }
+    } else {
+      await redisCmd(["DEL", "italive:logs"]);
+    }
+  }
 
   if (companyId) {
     globalStore.italiveLogs = globalStore.italiveLogs.filter(

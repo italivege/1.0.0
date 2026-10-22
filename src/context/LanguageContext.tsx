@@ -4,8 +4,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 import { translations } from "@/app/translations";
 
 type Language = "en" | "ka";
-// ვიღებთ ინგლისური ობიექტის ტიპს, რომ TypeScript-მა ავტომატურად ამოიცნოს სიტყვები
-type Translations = typeof translations.en; 
+type Translations = typeof translations.en;
 
 interface LanguageContextType {
   lang: Language;
@@ -16,12 +15,14 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [lang, setLang] = useState<Language>("en");
+  // საწყის ენად ვაყენებთ ქართულს ("ka"), რომ Google-მა ქართული კონტენტი დააინდექსოს
+  const [lang, setLang] = useState<Language>("ka");
 
-  // (სურვილისამებრ) აქ შეგიძლია ენა localStorage-შიც შეინახო, რომ დარეფრეშებისას არ დაიკარგოს
   useEffect(() => {
     const savedLang = localStorage.getItem("app_lang") as Language;
-    if (savedLang) setLang(savedLang);
+    if (savedLang === "en" || savedLang === "ka") {
+      setLang(savedLang);
+    }
   }, []);
 
   const handleSetLang = (newLang: Language) => {

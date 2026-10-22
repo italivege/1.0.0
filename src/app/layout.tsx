@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Orbitron, Rajdhani } from "next/font/google";
+import Script from "next/script";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackgroundCanvas from "@/components/BackgroundCanvas";
-import "./globals.css";
 import SeoSchema from "@/components/SeoSchema";
+import "./globals.css";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -19,7 +20,6 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.italive.ge"),
   title: {
@@ -30,7 +30,6 @@ export const metadata: Metadata = {
   description:
     "სრული IT აუთსორსინგი და აიტი მომსახურება ბიზნესისთვის: სერვერების გამართვა, ქსელების მონტაჟი, VPN, სატელეფონო სადგურები და IP ტელეფონები, პრინტერების გამართვა, ვებ საიტების და აპლიკაციების აწყობა, კიბერუსაფრთხოება 24/7.",
   keywords: [
-    // IT აუთსორსინგი და კომპიუტერული სერვისი
     "IT აუთსორსინგი",
     "აიტი აუთსორსინგი",
     "აიტი აუტსორსინგი",
@@ -45,7 +44,6 @@ export const metadata: Metadata = {
     "აიტი საპორტი",
     "IT საპორტი",
     "დისტანციური IT მხარდაჭერა",
-    // სერვერები, ქსელები, VPN
     "სერვერების გამართვა",
     "სერვერების ადმინისტრირება",
     "სერვერის კონფიგურაცია",
@@ -60,7 +58,6 @@ export const metadata: Metadata = {
     "კორპორატიული VPN",
     "MikroTik კონფიგურაცია",
     "Cisco კონფიგურაცია",
-    // სატელეფონო სადგურები, IP ტელეფონები, პრინტერები
     "სატელეფონო სადგურები",
     "სატელეფონო სადგურის გამართვა",
     "IP ტელეფონია",
@@ -71,7 +68,6 @@ export const metadata: Metadata = {
     "პრინტერების გამართვა",
     "პრინტერის ინსტალაცია",
     "პრინტერის კომპიუტერთან დაკავშირება",
-    // ვებ საიტების და აპლიკაციების აწყობა
     "ვებ საიტების აწყობა",
     "საიტების აწყობა",
     "საიტების დამზადება",
@@ -80,7 +76,6 @@ export const metadata: Metadata = {
     "აპლიკაციების დამზადება",
     "კიბერუსაფრთხოება",
     "მონაცემთა ბექაფი და აღდგენა",
-    // ლათინური ტრანსლიტერაცია
     "it autsorsingi",
     "aiti momsaxureba",
     "serverebis gamartva",
@@ -90,7 +85,6 @@ export const metadata: Metadata = {
     "aplikaciebis awyoba",
     "ip telefonia",
     "printerebis gamartva",
-    // ინგლისური
     "IT Outsourcing Georgia",
     "Managed IT Services Tbilisi",
     "Network & Server Administration Georgia",
@@ -137,6 +131,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
+  },
 };
 
 export default function RootLayout({
@@ -146,23 +143,38 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ka">
-      <body className={`${orbitron.variable} ${rajdhani.variable} font-sans antialiased selection:bg-cyan-500 selection:text-white flex flex-col min-h-screen`}>
-	  <SeoSchema />
+      <body
+        className={`${orbitron.variable} ${rajdhani.variable} font-sans antialiased selection:bg-cyan-500 selection:text-white flex flex-col min-h-screen`}
+      >
+        {/* Google Analytics (G-7YHJWXEKEQ) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7YHJWXEKEQ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7YHJWXEKEQ');
+          `}
+        </Script>
+
+        <SeoSchema />
+
         <LanguageProvider>
           {/* გლობალური ფონი და ეფექტები */}
           <BackgroundCanvas />
           <div className="scanlines"></div>
-		  
-	  
-		  
+
           {/* საერთო ნავიგაცია */}
           <Navbar />
-          
+
           {/* ცვალებადი კონტენტი (გვერდები) */}
           <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex-grow w-full relative z-10">
             {children}
           </main>
-          
+
           {/* საერთო ფუტერი */}
           <Footer />
         </LanguageProvider>

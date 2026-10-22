@@ -125,13 +125,13 @@ export default function RootLayout({
   return (
     <html lang="ka">
       <body className={`${orbitron.variable} ${rajdhani.variable} font-sans antialiased selection:bg-cyan-500 selection:text-white flex flex-col min-h-screen`}>
+	  <SeoSchema />
         <LanguageProvider>
           {/* გლობალური ფონი და ეფექტები */}
           <BackgroundCanvas />
           <div className="scanlines"></div>
 		  
-		  <SeoSchema />
-          {children}
+	  
 		  
           {/* საერთო ნავიგაცია */}
           <Navbar />

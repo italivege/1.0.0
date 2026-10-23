@@ -97,11 +97,7 @@ export const metadata: Metadata = {
   creator: "ITalive",
   publisher: "ITalive",
   alternates: {
-    canonical: "https://www.italive.ge",
-    languages: {
-      "ka-GE": "https://www.italive.ge",
-      "en-US": "https://www.italive.ge",
-    },
+    canonical: "./",
   },
   openGraph: {
     type: "website",
